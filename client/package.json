@@ -42,7 +42,7 @@
     "@testing-library/svelte": "^3.0.3",
     "axios": "0.21.4",
     "dotenv": "^10.0.0",
-    "node-sass": "^7.0.0",
+    "node-sass": "^7.0.3",
     "prettier": "^2.5.1",
     "prettier-plugin-svelte": "^2.5.1",
     "sirv-cli": "^1.0.0",
