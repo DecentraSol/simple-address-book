@@ -32,13 +32,14 @@ export const searchTerm = writable('')
 export const contacts = writable([])
 export const key = writable('create')
 
+
 // mutations
 export const filteredContacts = derived(
   [searchTerm, contacts],
   ([$searchTerm, $contacts]) =>
     $contacts.filter(
       contact =>
-        contact.firstname.toLowerCase().includes($searchTerm.toLowerCase()) ||
-        contact.lastname.toLowerCase().includes($searchTerm.toLowerCase())
+        contact?.firstname.toLowerCase().includes($searchTerm.toLowerCase()) ||
+        contact?.lastname.toLowerCase().includes($searchTerm.toLowerCase())
     )
 )

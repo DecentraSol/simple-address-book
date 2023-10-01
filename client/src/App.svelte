@@ -8,13 +8,24 @@
   import ContactForm from './pages/contactForm.svelte'
   import Contact from './components/contact.svelte'
   import { fade } from 'svelte/transition'
-  import { user} from './stores'
+  import { user, contacts,isLoading} from './stores'
   import Signup from './pages/authenticationSignup.svelte'
+  // import {
+  //   user,
+  //   filteredContacts,
+  //   contacts,
+  //   isLoading,
+  //   showSnackbarErrorContact,
+  // } from '../stores';
+
+  import {ipfsTest} from "./simple-ipfs-test";
+
+  ipfsTest()
 </script>
 
 <div class="container-app">
   <!-- routes -->
-  {#if !$user.isAuthenticated}
+  {#if false }
     <Router>
       <Route primary={false} path="/">
         <div class="route-component" transition:fade={{ duration: 700 }}>
@@ -30,7 +41,7 @@
       <Footer />
     </Router>
     <!-- protected routes -->
-  {:else if $user.isAuthenticated}
+  {:else if true || $user.isAuthenticated}
     <Router>
       <div transition:fade={{ duration: 0 }}>
         <Header />

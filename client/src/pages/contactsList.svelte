@@ -17,9 +17,10 @@
     import { ProgressLinear } from 'smelte';
     import { onMount } from 'svelte';
     onMount(async () => {
+        // $isLoading = false;
         const response = await getContactsList($user.token, $user._id);
         if (response) {
-            $contacts = response;
+            // $contacts = response;
             setTimeout(function () {
                 $isLoading = false;
             }, 2000);
@@ -27,6 +28,7 @@
             $showSnackbarErrorContact = true;
         }
     });
+    $: console.log("contacts", contacts)
 </script>
 
 <GenericSnackbar />
