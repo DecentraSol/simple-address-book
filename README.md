@@ -1,4 +1,4 @@
-# Simple address book with Orbit-db and Svelte
+# Simple address book with Orbit-DB and Svelte
 
 <a href="https://github.com/JulienChapron/simple-address-book/main/LICENSE">
  <img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="simple-address-book is released under the Public License v3.0." />
