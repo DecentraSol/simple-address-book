@@ -24,7 +24,7 @@ Get the code
 git clone https://github.com/DecentraSol/simple-address-book.git
 ```
 ```bash
-cd simple-address-book 
+cd simple-address-book/client
 yarn 
 yarn dev
 ```
