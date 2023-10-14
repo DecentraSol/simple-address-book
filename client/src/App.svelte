@@ -8,19 +8,61 @@
   import ContactForm from './pages/contactForm.svelte'
   import Contact from './components/contact.svelte'
   import { fade } from 'svelte/transition'
-  import { user, contacts,isLoading} from './stores'
+  import {ipfs, db, user, contacts, isLoading, showSnackbarErrorContact} from './stores'
   import Signup from './pages/authenticationSignup.svelte'
-  // import {
-  //   user,
-  //   filteredContacts,
-  //   contacts,
-  //   isLoading,
-  //   showSnackbarErrorContact,
-  // } from '../stores';
+  import { onMount } from "svelte";
+  import { getContactsList } from './services/contact.ts';
+  async function initializeOrbitDB() {
 
-  import {ipfsTest} from "./simple-ipfs-test";
+    if (!$ipfs) {
+      const IPFSmodule = await import('./modules/ipfs-core/ipfs-core.js');
+      const IPFS = IPFSmodule.default;
+      $ipfs = await IPFS.create({
+        EXPERIMENTAL: { pubsub: true },
+        repo: './ipfs/1' }
+      )
+    }
 
-  ipfsTest()
+    if (!$db) {
+      const OrbitDBModul = await import('./modules/orbitdb-core/index.js');
+      const createOrbitDB = OrbitDBModul.createOrbitDB;
+      const IPFSAccessController = OrbitDBModul.IPFSAccessController
+      console.log("mounted ipfs:",$ipfs)
+      const orbitdb = await createOrbitDB({ipfs:$ipfs});
+      console.log("mounted orbitdb:",orbitdb)
+      //localStorage.removeItem("deCad")
+      //check if deCad in localstorage has an existing orbit db address, if so take it otherwise create it and store it for later use
+      const deCad = localStorage.getItem("deCad");
+
+      $db = await orbitdb.open(deCad?deCad:'contacts-db', {
+        type: 'keyvalue',
+        AccessController: IPFSAccessController({ write: ['*'] })
+      })
+
+      console.log("orbitdb is",$db)
+      if(!deCad) localStorage.setItem("deCad",$db.address)
+      console.log(localStorage.getItem("deCad"));
+      // deCad===undefined?//store it for next time so we are not everytime creating a new address
+      // TODO we need a backup system for the deCad and db  (maybe a custodial service)
+    }
+  }
+
+  onMount(async ()=> {
+    console.log("mounting orbitdb")
+    await initializeOrbitDB()
+
+    $isLoading = true;
+
+    const response = await getContactsList($db,$user._id);
+    if (response) {
+      $contacts = response;
+      setTimeout(function () {
+        $isLoading = false;
+      }, 2000);
+    } else {
+      $showSnackbarErrorContact = true;
+    }
+  })
 </script>
 
 <div class="container-app">

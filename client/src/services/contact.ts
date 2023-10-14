@@ -1,40 +1,48 @@
-import Api from './Api.ts';
-import { base_url } from '../../environment.js';
 
-// actions like store Vuex
-export const getContactsList = async (token, userId) => {
-    try {
-        // const response = await Api.get(base_url, `contacts/${userId}`, undefined, token);
-        // return JSON.parse(JSON.stringify(response.data)).sort((a, b) =>
-        //     a.firstname.localeCompare(b.firstname),
-        // );
-        // return [{firstname:"nico"}]
-        return []
-    } catch (error) {
-        console.error(error);
+export const getContactsList = async (db) => {
+    if (db) {
+        const all = await db.all()
+        console.log("all in getContactsList",all)
+        const contactsArray = Object.values(all).sort((a, b) => a.value.firstname.localeCompare(b.value.firstname));
+        return contactsArray;
     }
+    return []
 };
-export const postContact = async (token, data) => {
-    try {
-        // const response = await Api.post(base_url, 'contact', data, token);
-        // return response;
-    } catch (error) {
-        console.error(error);
-    }
+
+/**
+ * adds a contact to our OrbitDB
+ * @param data
+ */
+export const postContact = async (db,data) => {
+    console.log("adding new contact to db",data)
+    // const data = forEach((value, key) => object[key] = value)
+    const id = data.id || new Date().toISOString();  // Generate a unique ID if not provided
+    const hash = await db.put(id,Object.fromEntries(data));
+    console.log("hash",hash)
+    const allContacts = await db.all()
+    console.log("allContacts",allContacts)
+    return { status: "success", id, hash };
 };
-export const updateContact = async (token, idContact, data) => {
-    try {
-        // const response = await Api.put(base_url, `contact/${idContact}`, data, token);
-        // return response;
-    } catch (error) {
-        console.error(error);
+
+export const updateContact = async (db,idContact, data) => {
+
+    if (!db.get(idContact)) {
+        throw new Error("Contact not found");
     }
+
+    await db.set(idContact, data);
+
+
+    return { status: "updated", id: idContact };
 };
-export const deleteContact = async (token, idContact, urlAvatar) => {
-    try {
-        // const response = await Api.deletee(base_url, `contact/${idContact}`, urlAvatar, token);
-        // return response;
-    } catch (error) {
-        console.error(error);
+
+export const deleteContact = async (db,idContact) => {
+
+    if (!db.get(idContact)) {
+        throw new Error("Contact not found");
     }
+
+    await db.del(idContact);
+
+    return { status: "deleted", id: idContact };
 };

@@ -8,8 +8,9 @@
     export let contactItem = undefined;
 
     function showContact(contactObj) {
-        navigate('/contact');
+        console.log("contactObj",contactObj)
         $contact = contactObj;
+        navigate('/contact');
     }
     function changeBackgroundUrl(avatarUrl) {
         return `background-image:url('${base_url_image}${avatarUrl}')`;
@@ -19,15 +20,15 @@
 <div data-testid="contactItem-component" class="card">
     <div
         style={changeBackgroundUrl(contactItem.avatar)}
-        on:click={showContact(contactItem)}
+        on:click={showContact(contactItem.value)}
         class="avatar"
     />
-    <div on:click={showContact(contactItem)} class="firstname-lastname">
+    <div on:click={showContact(contactItem.value)} class="firstname-lastname">
         <div data-testid="contactItem-firstname-lastname" style="line-height: 25px;">
-            {contactItem.firstname}{' '}{contactItem.lastname}
+            {contactItem.value.firstname}{' '}{contactItem.value.lastname}
         </div>
         <div data-testid="contactItem-mobile" class="subheading">
-            {contactItem.mobile}
+            {contactItem.value.mobile}
         </div>
     </div>
     <div class="update-delete-btn">
@@ -38,7 +39,7 @@
             colorBtn="alert"
             textBtn="update"
             keyBtn="small"
-            data={contactItem}
+            data={contactItem.value}
         />
         <GenericBtn
             iconBtn="delete"

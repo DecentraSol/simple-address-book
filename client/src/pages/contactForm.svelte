@@ -46,6 +46,7 @@
             }
         }
     }
+    $: console.log("contact in contactform", $contact)
 </script>
 
 <div class="link-div">

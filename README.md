@@ -21,10 +21,10 @@ Instead of using techniques like virtual DOM diffing, Svelte writes code that su
 Get the code
 
 ```bash
-git clone https://github.com/DecentraSol/simple-address-book.git
+git clone https://github.com/silkroadnomad/simple-address-book.git
 ```
 ```bash
-cd simple-address-book/client
-yarn 
-yarn dev
+cd carbon3
+npm i 
+npm run dev
 ```

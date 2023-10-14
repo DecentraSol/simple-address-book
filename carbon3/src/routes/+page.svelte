@@ -1,20 +1,15 @@
 <script>
     import QRCode from 'qrcode-generator';
     import { onMount } from "svelte";
-    import {
-        Theme,
-        Button,
-        TextInput,
-        ToastNotification,
-        Checkbox, DataTable, Grid, Column, Row,
-    } from "carbon-components-svelte";
-
+    import { Theme, Button,
+        TextInput, ToastNotification,
+        Modal, Checkbox, DataTable, Grid, Column, Row } from "carbon-components-svelte";
     import "carbon-components-svelte/css/all.css";
     import { ipfs, db, contacts } from "../stores.js"
     let theme = "g90";
 
     //QR Modal
-    let showModal = false;
+    let showModal = true;
     let qrData = "";
 
     //notification
@@ -29,16 +24,19 @@
         zipcode: "",
         city: "",
         country: "",
-        own: false
+        own: false,
+        orbitDbAddress: ""
     };
+    const DEFAULT_DB_NAME = "deCad01"
 
+    let open = false;
     let IPFSAccessController;
     let deCad; //the address of the main db (stored also in localstorage)
 
     $: loadAddress(selectedRowIds[0])
     function dropDB(){
         $db.drop()
-        localStorage.removeItem("deCad")
+        localStorage.removeItem(DEFAULT_DB_NAME)
     }
     async function initIPFS() {
         const IPFSmodule = await import('../modules/ipfs-core/ipfs-core.js');
@@ -46,13 +44,17 @@
         return await IPFS.create({ EXPERIMENTAL: { pubsub: true }, repo: './ipfs/1' });
     }
 
-    async function initOrbitDB(ipfsInstance) {
+    /**
+     * @param ipfsInstance
+     */
+    async function initOrbitDB(ipfsInstance,dbName) {
+        const _dbName = dbName?dbName:DEFAULT_DB_NAME
         const OrbitDBModul = await import('../modules/orbitdb-core/index.js');
         const createOrbitDB = OrbitDBModul.createOrbitDB;
         IPFSAccessController = OrbitDBModul.IPFSAccessController;
-        const orbitdb = await createOrbitDB({ ipfs: ipfsInstance });
-        deCad = localStorage.getItem("deCad");
-        return await orbitdb.open(deCad ? deCad : 'contactsKeyValue02', {
+        const orbitdb = await createOrbitDB({ ipfs  : ipfsInstance });
+        deCad = localStorage.getItem(_dbName);
+        return await orbitdb.open(_dbName, {
             type: 'keyvalue',
             AccessController: IPFSAccessController({ write: ['*'] })
         });
@@ -106,10 +108,12 @@
         notify("Contact added successfully!");
     }
 
-    async function updateContact() {
-        const id = selectedAddress.id
-        const deletedHash = await $db.del(id)
-        const updateHash = await $db.put(id,selectedAddress)
+    async function updateContact(contact) {
+        const contact4Update = contact?contact:selectedAddress
+        //const id = contact?contact.id:selectedAddress.id;
+
+        const deletedHash = await $db.del(contact4Update.id)
+        const updateHash = await $db.put(contact4Update.id,selectedAddress)
         notify("Contact updated successfully!")
         return {deletedHash,updateHash}
     }
@@ -131,7 +135,6 @@
         selectedAddress = $contacts.find(obj => obj.id === hash) || await $db.get(hash) || {};
     }
 
-
     function generateQRCode(data) {
         const qr = QRCode(4, 'L');
         qr.addData(data);
@@ -140,24 +143,67 @@
     }
 
     /**
-     * The neworbit-db address of this contact
-     * @param {string} contact
+     * Takes a contact object puts all attributes into the db
+     * return the address of the orbitdb
+     * @param contact
      */
-    async function generateQRForContact(contact) {
-        // Create new OrbitDB
-        const newOrbitDb = await createNewOrbitDBWithContact(contact);
+    async function createNewOrbitDBWithContact(contact) {
+        console.log("creating new db for",contact)
+        const contactDB = await initOrbitDB($ipfs,"testdb");
 
-        // Update the original DB
-        contact.orbitDbAddress = newOrbitDb.address;
-        await updateContact();  // Assuming updateContact can handle this
-
-        // Open the modal with the QR code
-        openQRModal(newOrbitDb.address);
+        for (const p in contact) {
+            if(p!=="qr") {
+                console.log(`adding ${p}: ${contact[p]}`);
+                contactDB.put(p,contact[p])
+            }
+        }
+        console.log("contactDB",contactDB.address)
+        return contactDB.address;
     }
 
-
+    /**
+     *
+     * @param contact
+     */
+    async function generateQRForContact(contact) {
+        contact.orbitDbAddress = await createNewOrbitDBWithContact(contact);
+        await updateContact(contact);
+        qrData = contact.orbitDbAddress
+        console.log("open ",qrData)
+        showModal = true
+    }
 </script>
-<Theme bind:theme />
+
+<Button on:click={() => (open = true)}>Create database</Button>
+
+<Modal  size="xs"
+        bind:open
+        modalHeading="Create database"
+        primaryButtonText="Confirm"
+        secondaryButtonText="Cancel"
+        on:click:button--secondary
+        on:open
+        on:close
+        on:submit
+>
+    <p>Create a new Cloudant database in the US South region.</p>
+</Modal>
+
+
+<Modal
+        bind:open
+        modalHeading="Create database"
+        primaryButtonText="Confirm"
+        secondaryButtonText="Cancel"
+        on:click:button--secondary={() => (open = false)}
+        on:open
+        on:close
+        on:submit
+>
+    <label>{qrData}</label>
+    {@html generateQRCode(qrData)}
+    <button on:click={() => showModal = false}>Close</button>
+</Modal>
 {#if showNotification}
     <ToastNotification kind="success" title="Success" subtitle={notificationMessage} />
 {/if}
@@ -206,7 +252,9 @@
                 radio
                 sortable
                 on:click={event => {
-                    if (event.detail.cell.id === 'qr') {
+
+                    console.log(event.detail)
+                    if (event?.detail?.cell?.key === 'qr') {
                         generateQRForContact(event.detail.row);
                     }
                 }}
@@ -227,12 +275,3 @@
         />
     </section>
 </main>
-
-
-{#if showModal}
-    <div class="modal">
-        <label>{qrData}</label>
-        {@html generateQRCode(qrData)}
-        <button on:click={() => showModal = false}>Close</button>
-    </div>
-{/if}

@@ -2,7 +2,7 @@
     import { Button, Dialog, Tooltip } from 'smelte';
     import { t } from '../i18n/i18n';
     import {
-        authentification,
+        db,
         user,
         messageErrorBtn,
         key,
@@ -13,7 +13,6 @@
         messageErrorSizeContactAvatar,
         showSnackbarDeletedContact,
     } from '../stores';
-    import { postLogin, postSignup } from '../services/authJwt.ts';
     import { deleteContact, postContact, updateContact } from '../services/contact.ts';
     import { useNavigate } from 'svelte-navigator';
 
@@ -34,31 +33,8 @@
 
     async function genericMethod() {
         switch (methodBtn) {
-            case 'signup':
-                formData.append('username', $authentification.username);
-                formData.append('password', $authentification.password);
-                response = await postSignup(formData);
-                if (response.success) {
-                    $messageErrorBtn = '';
-                    //$user = response.data;
-                    navigate('/');
-                } else {
-                    $messageErrorBtn = response;
-                }
-                break;
-            case 'login':
-                formData.append('username', $authentification.username);
-                formData.append('password', $authentification.password);
-                response = await postLogin(formData);
-                if (response.success) {
-                    $messageErrorBtn = '';
-                    $user = response.data;
-                } else {
-                    $messageErrorBtn = response;
-                }
-
-                break;
             case 'addContact':
+                console.log("addContact")
                 navigate('/contact-form');
                 $key = 'POST';
                 $contact = {
@@ -87,6 +63,7 @@
                 navigate('/');
                 break;
             case 'validateContact':
+                console.log("validateContact")
                 $messageErrorBtn = '';
                 // if uploaded image
                 if (document.getElementById('imgfile').files[0]) {
@@ -105,8 +82,8 @@
                             formData.append('email', $contact.email);
                             formData.append('mobile', $contact.mobile);
                             formData.append('userId', $user._id);
-                            if ($key === 'POST') {
-                                const response = await postContact($user.token, formData);
+                            if ($key === 'POST') {console.log("post",$key)
+                                const response = await postContact($db,formData);
                                 if (response.success && !response.error) {
                                     $contacts.push(response.data);
                                     $contacts = $contacts.sort();
@@ -115,12 +92,13 @@
                                 } else if (response.msg) {
                                     $messageErrorBtn = response.msg;
                                 }
-                            } else if ($key === 'PUT') {
+                            } else if ($key === 'PUT') { console.log("PUT",$key)
                                 const response = await updateContact(
-                                    $user.token,
+                                    $db,
                                     $contact._id,
                                     formData,
                                 );
+                                console.log("response from update",response)
                                 if (!response.msg) {
                                     $contacts.forEach((element, index) => {
                                         if (element.id === response.data._id) {
@@ -137,14 +115,16 @@
                     }
                 } else {
                     let formData = new FormData();
+
                     formData.append('avatar', $contact.avatar);
                     formData.append('firstname', $contact.firstname);
                     formData.append('lastname', $contact.lastname);
                     formData.append('email', $contact.email);
                     formData.append('mobile', $contact.mobile);
                     formData.append('userId', $user._id);
+
                     if ($key === 'POST') {
-                        const response = await postContact($user.token, formData);
+                        const response = await postContact($db,formData);
                         if (response.success && !response.error) {
                             $contacts.push(response.data);
                             $contacts = $contacts.sort();
@@ -154,9 +134,9 @@
                             $messageErrorBtn = response.msg;
                         }
                     } else if ($key === 'PUT') {
-                        const response = await updateContact($user.token, $contact._id, formData);
+                        const response = await updateContact($db,$contact._id, formData);
                         if (!response.error) {
-                            $contacts.forEach((element, index) => {
+                            $contacts.forEach((element, index) => { //TODO probably its not needed to have a store contacts we could just need the data in db
                                 if (element.id === response.data._id) {
                                     $contacts[index] = response;
                                 }
@@ -171,11 +151,12 @@
         }
     }
     async function deleteContactConfirmation() {
-        const id = $contact._id;
-        const response = await deleteContact($user.token, $contact._id, $contact.avatar);
+        console.log("deleting contact",$contact)
+        const hash = $contact.hash;
+        const response = await deleteContact($db, $contact.hash, $contact.avatar);
         if (response) {
             showDialog = !showDialog;
-            $contacts = $contacts.filter(contact => contact._id !== id);
+            $contacts = $contacts.filter(contact => contact.hash !== hash);
             $showSnackbarDeletedContact = true;
             navigate('/');
         }

@@ -10,8 +10,8 @@
     let apiUrlImage = base_url_image;
 
     function updateContact() {
-        navigate('/contact-form');
         $contact = $contact;
+        navigate('/contact-form');
         $key = 'PUT';
     }
 </script>

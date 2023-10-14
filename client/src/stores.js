@@ -1,4 +1,9 @@
 import { writable, derived } from 'svelte/store'
+
+//orbitdb
+export const ipfs = writable()
+export const db = writable()
+
 // state
 export const contact = writable({
   _id:'',
@@ -39,7 +44,7 @@ export const filteredContacts = derived(
   ([$searchTerm, $contacts]) =>
     $contacts.filter(
       contact =>
-        contact?.firstname.toLowerCase().includes($searchTerm.toLowerCase()) ||
-        contact?.lastname.toLowerCase().includes($searchTerm.toLowerCase())
+        contact?.value?.firstname.toLowerCase().includes($searchTerm.toLowerCase()) ||
+        contact?.value?.lastname.toLowerCase().includes($searchTerm.toLowerCase())
     )
 )

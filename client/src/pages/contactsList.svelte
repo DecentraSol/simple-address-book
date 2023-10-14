@@ -1,8 +1,9 @@
 <script>
     import GenericBtn from '../components/genericBtn.svelte';
-    import { getContactsList } from '../services/contact.ts';
+
     import { t } from '../i18n/i18n';
     import {
+        db,
         user,
         filteredContacts,
         contacts,
@@ -15,34 +16,24 @@
     import ContactItem from '../components/contactItem.svelte';
     import { fade } from 'svelte/transition';
     import { ProgressLinear } from 'smelte';
-    import { onMount } from 'svelte';
-    onMount(async () => {
-        // $isLoading = false;
-        const response = await getContactsList($user.token, $user._id);
-        if (response) {
-            // $contacts = response;
-            setTimeout(function () {
-                $isLoading = false;
-            }, 2000);
-        } else {
-            $showSnackbarErrorContact = true;
-        }
-    });
     $: console.log("contacts", contacts)
 </script>
 
 <GenericSnackbar />
-<GenericBtn
-    testid="add-contact-btn"
-    methodBtn="addContact"
-    colorBtn="secondary"
-    textBtn="addContact"
-    iconBtn="add"
-/>
+<div class="link-div">
+    <GenericBtn
+        testid="add-contact-btn"
+        methodBtn="addContact"
+        colorBtn="secondary"
+        textBtn="addContact"
+        iconBtn="add"
+    />
+</div>
 <Searchbar />
 <div class="list">
     {#if $isLoading}
-        <span transition:fade={{ duration: 2000 }}><ProgressLinear color="success" /></span>
+        <span transition:fade={{ duration: 2000 }}>
+            <ProgressLinear color="success" /></span>
     {:else}
         <ul transition:fade={{ duration: 1000 }}>
             {#if !$filteredContacts}
