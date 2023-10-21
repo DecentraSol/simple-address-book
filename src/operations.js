@@ -72,6 +72,7 @@ export async function updateContact(contact) {
 
     //don't notify when creating a qr-code
     if(!contact) notify(`Contact added successfully! ${updateHash}`)
+    selectedAddress.set({})
     return {deletedHash,updateHash}
 }
 
@@ -81,7 +82,7 @@ export async function updateContact(contact) {
  */
 export async function deleteContact() {
     const deletedHash = await _orbitDB.del(_selectedAddress.id)
-    notify(`Contact added successfully! ${deletedHash}`)
+    notify(`Contact deleted successfully! ${deletedHash}`)
     return {deletedHash}
 }
 

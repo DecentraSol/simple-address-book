@@ -1,11 +1,13 @@
+const DEFAULT_DB_NAME = "deCad01"
+
 /**
  * Initializing IPFS-Core
  * @returns {Promise<*>}
  */
-export async function initIPFS() {
+export async function initIPFS(config) {
     const IPFSmodule = await import('./modules/ipfs-core/ipfs-core.js');
     const IPFS = IPFSmodule.default;
-    return await IPFS.create({ EXPERIMENTAL: { pubsub: true }, repo: './ipfs/1' });
+    return await IPFS.create();
 }
 
 /**
@@ -22,17 +24,19 @@ export async function initOrbitDB(ipfsInstance,dbName) {
     const createOrbitDB = OrbitDBModul.createOrbitDB;
     const IPFSAccessController = OrbitDBModul.IPFSAccessController;
     const orbitdb = await createOrbitDB({ ipfs  : ipfsInstance });
+
     const deCad = localStorage.getItem(_dbName);
-    const orbitDB = await orbitdb.open(_dbName, {
+    console.log("_dbName",_dbName)
+    console.log("deCad",deCad)
+    const orbitDB = await orbitdb.open(deCad?deCad:_dbName, {
         type: 'keyvalue',
         AccessController: IPFSAccessController({ write: ['*'] })
     });
+    localStorage.setItem(_dbName,orbitDB.address)
+
     return {orbitDB, IPFSAccessController, deCad}
 }
 
-
-
-const DEFAULT_DB_NAME = "deCad01"
 export async function dropDB(orbitDB){
     await orbitDB.drop()
     localStorage.removeItem(DEFAULT_DB_NAME)

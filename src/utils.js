@@ -33,7 +33,11 @@ export async function sha256(input) {
 export function notify(message) {
     notificationMessage.set(message);
     showNotification.set(true)
-    setTimeout(() => _notificationMessage = false, 3000);
+
+    setTimeout(() => {
+        showNotification.set(false)
+        notificationMessage.set(undefined);
+    }, 2000);
 }
 
 export function clickToCopy(node, target) {
