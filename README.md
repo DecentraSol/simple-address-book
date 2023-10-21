@@ -1,4 +1,4 @@
-# A simple address book Orbit-DB and Svelte
+# A simple address book with OrbitDB and Svelte
 
 Enter your own address and store it locally in your browser, share your contact data via qr-code without an app server or cloud.
 Scan and subscribe to other's contact data. (TODO)
