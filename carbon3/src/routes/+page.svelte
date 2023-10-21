@@ -28,7 +28,7 @@
 
         $orbitDB.events.on('join', async (peerId, heads) => {
             console.log(peerId, (await $ipfs.id()).id)
-        })
+        })  //TODO displaying joining peers should be done on the IFPS and not on orbit
 
         const dbAll = await $orbitDB.all()
         $contacts = dbAll.map(a => {
@@ -40,6 +40,6 @@
 
     $: loadContact($selectedRowIds[0]) //loads the selected contact into the contact form
 </script>
-
+<h2>Decentralized Addressbook</h2> {$orbitDB.address}
 <ContactForm/>
 <ContactTable/>

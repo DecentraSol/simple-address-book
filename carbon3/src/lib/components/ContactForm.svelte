@@ -5,7 +5,6 @@
 </script>
 
 <section>
-    <h2>Decentralized Addressbook</h2>
     <Grid>
         <Row>
             <Column><TextInput size="sm" labelText="firstname" placeholder="Enter firstname..."
