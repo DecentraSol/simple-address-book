@@ -136,7 +136,7 @@
                     } else if ($key === 'PUT') {
                         const response = await updateContact($db,$contact._id, formData);
                         if (!response.error) {
-                            $contacts.forEach((element, index) => { //TODO probably its not needed to have a store contacts we could just need the data in db
+                            $contacts.forEach((element, index) => { //TODO probably its not needed to have a store contacts we could just need the data in orbitDB
                                 if (element.id === response.data._id) {
                                     $contacts[index] = response;
                                 }

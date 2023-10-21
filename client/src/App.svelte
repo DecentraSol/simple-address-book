@@ -31,10 +31,10 @@
       const orbitdb = await createOrbitDB({ipfs:$ipfs});
       console.log("mounted orbitdb:",orbitdb)
       //localStorage.removeItem("deCad")
-      //check if deCad in localstorage has an existing orbit db address, if so take it otherwise create it and store it for later use
+      //check if deCad in localstorage has an existing orbit orbitDB address, if so take it otherwise create it and store it for later use
       const deCad = localStorage.getItem("deCad");
 
-      $db = await orbitdb.open(deCad?deCad:'contacts-db', {
+      $db = await orbitdb.open(deCad?deCad:'contacts-orbitDB', {
         type: 'keyvalue',
         AccessController: IPFSAccessController({ write: ['*'] })
       })
@@ -43,7 +43,7 @@
       if(!deCad) localStorage.setItem("deCad",$db.address)
       console.log(localStorage.getItem("deCad"));
       // deCad===undefined?//store it for next time so we are not everytime creating a new address
-      // TODO we need a backup system for the deCad and db  (maybe a custodial service)
+      // TODO we need a backup system for the deCad and orbitDB  (maybe a custodial service)
     }
   }
 

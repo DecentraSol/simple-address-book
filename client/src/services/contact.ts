@@ -14,7 +14,7 @@ export const getContactsList = async (db) => {
  * @param data
  */
 export const postContact = async (db,data) => {
-    console.log("adding new contact to db",data)
+    console.log("adding new contact to orbitDB",data)
     // const data = forEach((value, key) => object[key] = value)
     const id = data.id || new Date().toISOString();  // Generate a unique ID if not provided
     const hash = await db.put(id,Object.fromEntries(data));
