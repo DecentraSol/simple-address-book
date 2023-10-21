@@ -46,7 +46,7 @@
         console.log("$contacts",$contacts)
     });
 
-    // $: loadContact($selectedRowIds[0])
+    $: loadContact($selectedRowIds[0])
 </script>
 
 <ContactForm/>

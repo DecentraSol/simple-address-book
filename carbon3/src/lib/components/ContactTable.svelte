@@ -2,6 +2,7 @@
     import {DataTable} from "carbon-components-svelte";
     import {contacts, selectedRowIds} from "../../stores.js";
     import {generateQRForAddress} from "../../operations.js"
+    $:console.log("ContactTable selectedRowIds",$selectedRowIds)
 </script>
 
 <DataTable
