@@ -7,7 +7,7 @@ Data arent't processed on our or other's servers and directly transmitted betwee
 P2P-Connection is established via the IFPS-network.
 
 ## TODO
-- make browsers db accessible via entering an orbitdb's address - add a text input, when changing verifyaddress and load db 
+- make address book db accessible via entering another orbitdb's address - add a text input when changing, then verifyaddress and load db 
 - add another textinput connect to a DAL (Decentralized Address Link) and import its contents, when owner changes address - change should appear immediately on replication 
 - when sharing an address display its contents in modal.
 - 
