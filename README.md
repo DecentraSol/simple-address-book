@@ -1,7 +1,8 @@
 # A decentralized address book with OrbitDB and Svelte
 
-Enter your own address and store it locally in your browser storage
-share your contact data via qr-code without an app server or cloud.
+Enter your own address and store it locally in your browser storage.
+
+Share your contact data via qr-code without an app server or cloud.
 Scan and subscribe to other's contact data. (TODO)
 
 Data arent't processed on our or other's servers and directly transmitted between browser or mobile peers.
