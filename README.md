@@ -1,7 +1,10 @@
-# A simple address book with OrbitDB and Svelte
+# A descentralized address book with OrbitDB and Svelte
 
 Enter your own address and store it locally in your browser, share your contact data via qr-code without an app server or cloud.
 Scan and subscribe to other's contact data. (TODO)
+
+Data arent't processed on our or other's servers and directly transmitted between browser or mobile peers.
+P2P-Connection is established via the IFPS-network.
 
 ## TODO
 - make browsers db accessible via entering an orbitdb's address - add a text input, when changing verifyaddress and load db 
