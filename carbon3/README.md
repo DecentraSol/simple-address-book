@@ -1,4 +1,7 @@
-# create-svelte
+# A simple addres book Orbit-DB and Svelte
+
+Enter your own address and store it locally in your browser, share your contact data via qr-code without an app server or cloud.
+Scan and subscribe to other's contact data.
 
 Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
 

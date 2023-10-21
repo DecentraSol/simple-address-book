@@ -1,4 +1,7 @@
-# Simple address book with Orbit-DB and Svelte
+# A simple addres book Orbit-DB and Svelte
+
+Enter your own address and store it locally in your browser, share your contact data via qr-code without an app server or cloud.
+Scan and subscribe to other's contact data. 
 
 <a href="https://github.com/JulienChapron/simple-address-book/main/LICENSE">
  <img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="simple-address-book is released under the Public License v3.0." />
