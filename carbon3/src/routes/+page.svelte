@@ -20,6 +20,11 @@
         // dropDB()
         $orbitDB.events.on("update", async (entry) => {
             const dbAll = await $orbitDB.all()
+
+            // for (let i = 0; i < dbAll.length; i++) {
+            //     dbAll[i].id =  await sha256(JSON.stringify(dbAll[i]))
+            // }
+
             $contacts = dbAll.map(a => {
                 const newElement = a.value
                 return newElement
@@ -28,9 +33,13 @@
 
         $orbitDB.events.on('join', async (peerId, heads) => {
             console.log(peerId, (await $ipfs.id()).id)
-        })  //TODO displaying joining peers should be done on the IFPS and not on orbit
+        })
 
         const dbAll = await $orbitDB.all()
+        for (let i = 0; i < dbAll.length; i++) {
+            console.log("dbAll[i]",dbAll[i])
+           // dbAll[i].id =  await sha256(JSON.stringify(dbAll[i])) //TODO add sha256 only beofre adding
+        }
         $contacts = dbAll.map(a => {
             const newElement = a.value
             return newElement
@@ -40,6 +49,6 @@
 
     $: loadContact($selectedRowIds[0]) //loads the selected contact into the contact form
 </script>
-<h2>Decentralized Addressbook</h2> {$orbitDB.address}
+<h2>Decentralized Addressbook</h2> {$orbitDB?.address}
 <ContactForm/>
 <ContactTable/>

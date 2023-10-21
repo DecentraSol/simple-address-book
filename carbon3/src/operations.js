@@ -92,7 +92,7 @@ export async function deleteContact() {
  */
 export async function createNewOrbitDBWithAddress(address) {
     console.log("creating new orbitDB for",address)
-    const {orbitDB} = await initOrbitDB(_ipfs,"testdb"); //testdb show be the address of the contact
+    const {orbitDB} = await initOrbitDB(_ipfs,address.id); //TODO when creating a new address db to share we need unique id - why not creating it this way even when contact data change later
     console.log("created contactDB",orbitDB.address)
     for (const p in address) {
         if(p!=="qr" && address[p] !== undefined && address[p] !== '' ) {

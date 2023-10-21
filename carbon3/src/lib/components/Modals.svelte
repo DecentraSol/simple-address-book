@@ -4,6 +4,7 @@
     import {createEventDispatcher} from "svelte";
     const dispatch = createEventDispatcher();
     import { clickToCopy } from "../../utils.js"
+    import {selectedAddress} from "../../stores.js";
     /**
      * @type {boolean}
      * when true qr-code modal is open
@@ -49,7 +50,6 @@
        on:click:button--secondary={ () => dispatch('close') }
        on:close={()=>dispatch('close')}>
     <label use:clickToCopy>{qrCodeData}</label>&nbsp;<span>{text}</span><br>
-
-    {@html generateQRCode(qrCodeData)}
+    {#if qrCodeData && qrCodeOpen}{@html generateQRCode(qrCodeData)}{/if}
 
 </Modal>
