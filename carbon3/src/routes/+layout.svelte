@@ -3,11 +3,7 @@
     import {ToastNotification} from "carbon-components-svelte";
     import Modals from "$lib/components/Modals.svelte";
     import { showNotification, notificationMessage,qrCodeOpen,qrCodeData } from "../stores.js"
-
-    $: console.log("qrCodeOpen",$qrCodeOpen)
 </script>
-
-
 
 <Modals on:close={()=>$qrCodeOpen=false} qrCodeOpen={$qrCodeOpen} qrCodeData={$qrCodeData} />
 

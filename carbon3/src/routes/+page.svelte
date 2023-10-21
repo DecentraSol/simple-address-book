@@ -3,7 +3,7 @@
     import { ipfs, orbitDB, contacts, selectedRowIds } from "../stores.js"
     import { sha256 } from "../utils.js"
     import { initIPFS, initOrbitDB } from "../init.js"
-    import {loadContact} from "../operations.js";
+    import { loadContact } from "../operations.js";
     import ContactTable from "$lib/components/ContactTable.svelte";
     import ContactForm from "$lib/components/ContactForm.svelte";
 
@@ -20,11 +20,6 @@
         // dropDB()
         $orbitDB.events.on("update", async (entry) => {
             const dbAll = await $orbitDB.all()
-
-            for (let i = 0; i < dbAll.length; i++) {
-                dbAll[i].id =  await sha256(JSON.stringify(dbAll[i]))
-            }
-
             $contacts = dbAll.map(a => {
                 const newElement = a.value
                 return newElement
@@ -36,9 +31,6 @@
         })
 
         const dbAll = await $orbitDB.all()
-        for (let i = 0; i < dbAll.length; i++) {
-            dbAll[i].id =  await sha256(JSON.stringify(dbAll[i]))
-        }
         $contacts = dbAll.map(a => {
             const newElement = a.value
             return newElement
@@ -46,7 +38,7 @@
         console.log("$contacts",$contacts)
     });
 
-    $: loadContact($selectedRowIds[0])
+    $: loadContact($selectedRowIds[0]) //loads the selected contact into the contact form
 </script>
 
 <ContactForm/>

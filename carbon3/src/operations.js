@@ -65,6 +65,9 @@ export async function addContact() {
 export async function updateContact(contact) {
     const contact4Update = contact?contact:_selectedAddress
     const deletedHash = await _orbitDB.del(contact4Update.id)
+
+    const id = await sha256(JSON.stringify(contact4Update));
+    contact4Update.id = id;
     const updateHash = await _orbitDB.put(contact4Update.id,contact4Update)
 
     //don't notify when creating a qr-code
