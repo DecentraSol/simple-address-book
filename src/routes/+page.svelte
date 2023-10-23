@@ -1,7 +1,6 @@
 <script>
     import { onMount } from "svelte";
     import { ipfs, orbitDB, contacts, selectedRowIds } from "../stores.js"
-    import { sha256 } from "../utils.js"
     import { initIPFS, initOrbitDB } from "../init.js"
     import { loadContact } from "../operations.js";
     import ContactTable from "$lib/components/ContactTable.svelte";
@@ -10,20 +9,29 @@
     // let deCad; //the address of the main orbitDB (stored also in localstorage)
 
     onMount(async () => {
-        const config = {
-            repo: "./decad-repo-2023",
-            EXPERIMENTAL: { pubsub: true },
-            config:
-                {
+        const config1 = {
                     Addresses: {
                         Swarm: [
                             '/dns6/ipfs.le-space.de/tcp/9091/wss/p2p-webrtc-star',
                             '/dns4/ipfs.le-space.de/tcp/9091/wss/p2p-webrtc-star'
                         ]
+                    },
+                    Bootstrap: [],
+                    Discovery: {
+                        MDNS: {
+                            Enabled: true,
+                            Interval: 0
+                        }
                     }
                 }
-        }
-        if (!$ipfs) $ipfs = await initIPFS(config);
+
+        if (!$ipfs) $ipfs = await initIPFS({
+            config: config1,
+            EXPERIMENTAL: { pubsub: true },
+            preload: { "enabled": false },
+            repo: './decad01' });
+        window.ipfs = $ipfs
+        console.log("ipfs",$ipfs)
         const topic = 'fruit-of-the-day'
         const receiveMsg = (msg) => console.log(msg.toString())
 
@@ -34,14 +42,16 @@
         $ipfs.libp2p.on('peer:disconnect', peerInfo => console.log("peerInfo",peerInfo))
 
         const initOrbitData = await initOrbitDB($ipfs)
+
         // deCad = initOrbitData.deCad;
         // console.log("deCad",deCad)
         if (!$orbitDB) $orbitDB = initOrbitData.orbitDB;
         console.log("orbitdb is",$orbitDB)
+        window.orbitdb = $orbitDB
 
 
-        // dropDB()
         $orbitDB.events.on("update", async (entry) => {
+            console.log(entry)
             const dbAll = await $orbitDB.all()
 
             // for (let i = 0; i < dbAll.length; i++) {
