@@ -26,14 +26,14 @@ export async function initOrbitDB(ipfsInstance,dbName) {
     if(dbName===undefined)
         dbName = localStorage.getItem("dbName");
     if(dbName===undefined || dbName === null) dbName = DEFAULT_DB_NAME
-    console.log("dbName",dbName)
+    console.log("initializing dbName",dbName)
 
     const OrbitDBModul = await import('./modules/orbitdb-core/index.js');
     const createOrbitDB = OrbitDBModul.createOrbitDB;
     const IPFSAccessController = OrbitDBModul.IPFSAccessController;
     const orbitdb = await createOrbitDB({ ipfs  : ipfsInstance });
 
-    const writePermission = orbitdb.identity.id //['*']
+    const writePermission = ['*'] //orbitdb.identity.id //['*']
     const orbitDB = await orbitdb.open(
             dbName, {
             type: 'keyvalue',

@@ -4,6 +4,7 @@ import { writable } from 'svelte/store'
 export const ipfs = writable()
 export const orbitDB = writable()
 export const contacts = writable([])
+export const dals = writable([])
 
 export const showNotification =  writable()
 export const notificationMessage = writable()

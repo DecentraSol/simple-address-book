@@ -1,5 +1,5 @@
 import {sha256,notify} from "./utils.js";
-import {contacts, orbitDB, ipfs, selectedAddress, selectedTab, qrCodeData, qrCodeOpen} from "./stores.js";
+import {contacts, orbitDB, ipfs, dals, selectedAddress, selectedTab, qrCodeData, qrCodeOpen} from "./stores.js";
 import {initOrbitDB} from "./init.js"
 
 let _ipfs;
@@ -20,6 +20,11 @@ selectedAddress.subscribe((value) => {
 let _orbitDB;
 orbitDB.subscribe((value) => {
     _orbitDB = value
+})
+
+let _dals;
+dals.subscribe((value) => {
+    _dals = value
 })
 
 let _contacts;
@@ -99,23 +104,35 @@ export async function deleteContact() {
 /**
  * Takes a contact object puts all attributes into the orbitDB
  * return the address of the orbitdb
- * @param address
+ * @param contact
  */
-export async function createNewOrbitDBWithAddress(address) {
-    console.log("creating new orbitDB for",address)
-    const {orbitDB} = await initOrbitDB(_ipfs,address.id); //TODO when creating a new address db to share we need unique id - why not creating it this way even when contact data change later
-    console.log("created contactDB",orbitDB.address)
-    for (const p in address) {
+export async function createDALFromContact(contact) {
+    console.log("creating new orbitDB for",contact)
+
+    const orbitObj = await initOrbitDB(_ipfs,contact.id); //TODO when creating a new address db to share we need unique id - why not creating it this way even when contact data change later
+    console.log("created contactDB",orbitObj.orbitDB.address)
+    for (const p in contact) {
         if(p!=="qr" &&
             p!=='own' &&
-            address[p] !== undefined &&
-            address[p] !== '' ) {
-            console.log(`adding ${p}: ${address[p]}`);
-            orbitDB.put(p,address[p])
+            contact[p] !== undefined &&
+            contact[p] !== '' ) {
+            console.log(`adding ${p}: ${contact[p]}`);
+            orbitObj.orbitDB.put(p,contact[p])
         }
     }
-    console.log("contactDB",orbitDB.address)
-    return orbitDB.address;
+
+    orbitObj.orbitDB.events.on("update", async (entry) => {
+        console.log(entry) //it is not necessary to add this to the contacts because it is allready insdie
+        const dbAll = await orbitObj.orbitDB.all()
+        console.log("all in new db?!",dbAll)
+
+    })
+    const dbAll = await orbitObj.orbitDB.all()
+    console.log("all in new db?!",dbAll)
+
+    _dals.push(orbitObj.orbitDB)
+    console.log("new Dal running for ",orbitObj.orbitDB.address)
+    return orbitObj.orbitDB.address;
 }
 
 /**
@@ -130,7 +147,7 @@ export async function createNewOrbitDBWithAddress(address) {
  * @returns {Promise<void>}
  */
 export async function generateQRForAddress(contact) {
-    contact.orbitDbAddress = await createNewOrbitDBWithAddress(contact);
+    contact.orbitDbAddress = await createDALFromContact(contact);
     await updateContact(contact);
     qrCodeData.set(contact.orbitDbAddress)
     qrCodeOpen.set(true)

@@ -1,25 +1,30 @@
 <script>
     import { Button, TextInput, Column, Grid, Row } from "carbon-components-svelte";
     import {initOrbitDB} from "../../init.js"
-    import { ipfs, orbitDB, contacts } from "../../stores.js"
+    import { ipfs, orbitDB, contacts, dals } from "../../stores.js"
     import {notify} from "../../utils.js";
 
     let dbNameOrAddress;
     let nameOfDb;
     let myId;
     let found;
+    let accessWrite;
     $:{
         if($orbitDB && !found){ //only one time
             dbNameOrAddress = $orbitDB?.address
             myId = $orbitDB?.identity?.id
             nameOfDb = $orbitDB.name
             found = true
+            accessWrite= $orbitDB.access.write
         }
     }
+    $:console.log("dals in settings",$dals)
+
     const changeAddress = async () => {
             const dbObject =  await initOrbitDB($ipfs,dbNameOrAddress)
 
             $orbitDB = dbObject.orbitDB
+            localStorage.setItem("dbName",$orbitDB.address)
         {
             //TODO put this into a function to load all contacts after initializatino of database
             const dbAll = await $orbitDB.all()
@@ -39,7 +44,7 @@
             })
         }
 
-            // $orbitDB.drop()
+
             dbNameOrAddress = $orbitDB.address
             nameOfDb = $orbitDB.name
             notify(`main addres db loaded! address:${$orbitDB.address}`);
@@ -64,5 +69,20 @@
     <Row>
         <Column sm={1}>My Identity:</Column>
         <Column sm={3}><TextInput disabled size="sm" bind:value={myId} /></Column>
+    </Row>
+    <Row>
+        <Column sm={1}>Access:</Column>
+        <Column sm={3}><TextInput disabled size="sm" bind:value={accessWrite} /></Column>
+    </Row>
+    <Row>
+        <Column sm={1}>Dals published:</Column>
+        <Column sm={3}><TextInput disabled size="sm" bind:value={$dals.length} /></Column>
+    </Row>
+    <Row>
+        <Column sm={1}>Drop DB:</Column>
+        <Column sm={3}><Button size="sm" on:click={()=>{
+            $orbitDB.drop()
+            notify("Db dropped!")
+        }}>Drop DB</Button></Column>
     </Row>
 </Grid>

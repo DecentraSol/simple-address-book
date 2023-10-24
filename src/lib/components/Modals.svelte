@@ -37,9 +37,6 @@
     function copyError(event){
         text = `Error! ${event.detail}`
     }
-
-    $: console.log("qrCodeOpen",qrCodeOpen)
-
 </script>
 <svelte:window on:copysuccess={copySuccess} on:copyerror={copyError}/>
 <Modal bind:open={qrCodeOpen}

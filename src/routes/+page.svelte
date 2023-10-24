@@ -1,12 +1,14 @@
 <script>
     import { onMount } from "svelte";
-    import { ipfs, orbitDB, contacts, selectedRowIds, selectedTab } from "../stores.js"
+    import { ipfs, orbitDB, contacts, dals, selectedRowIds, selectedTab } from "../stores.js"
     import { initIPFS, initOrbitDB } from "../init.js"
     import {loadContact} from "../operations.js";
     import ContactTable from "$lib/components/ContactTable.svelte";
     import ContactForm from "$lib/components/ContactForm.svelte";
     import {Tabs, Tab, TabContent, Button, TextInput, Column, Grid, Row} from "carbon-components-svelte";
     import Settings from "$lib/components/Settings.svelte";
+
+    let scannedAddress
 
     onMount(async () => {
         const config1 = {
@@ -51,10 +53,6 @@
         console.log("orbitdb is",$orbitDB)
         window.orbitdb = $orbitDB
 
-        $orbitDB.events.on('join', async (peerId, heads) => {
-            console.log(peerId, (await $ipfs.id()).id)
-        })
-
         {
             //TODO put this into a function to load all contacts after initializatino of database see Setting.svelte
             const dbAll = await $orbitDB.all()
@@ -62,6 +60,18 @@
                 const newElement = a.value
                 return newElement
             });
+
+            //load our DALs
+            for (const i in $contacts) {
+                console.log("checking contact must be a DAL to others?", $contacts[i])
+                if($contacts[i].orbitDbAddress){
+                    console.log("initializing dal to ",$contacts[i].orbitDbAddress)
+                    const dalObject = await initOrbitDB($ipfs, $contacts[i].orbitDbAddress)
+                    $dals.push(dalObject.orbitDB)
+                    console.log("was loading dal's db",$dals.length)
+
+                }
+            }
 
             $orbitDB.events.on("update", async (entry) => {
                 console.log(entry) //it is not necessary to add this to the contacts because it is allready insdie
@@ -77,7 +87,25 @@
     });
 
     $: loadContact($selectedRowIds[0]) //loads the selected contact into the contact form
+
+    const importDAL = async () => {
+
+        const dbImportObject = await initOrbitDB($ipfs, scannedAddress)
+        const importDB = dbImportObject.orbitDB
+        console.log("importing scanned DAL", importDB.address)
+        const recordsToImport = await importDB.all()
+        importDB.events.on("update", async (entry) => {
+            console.log("importDB-entry",entry) //it is not necessary to add this to the contacts because it is allready insdie
+            const dbAll = await importDB.all()
+            console.log("importDB:dbAll",dbAll)
+        })
+        console.log("recordsToImport",recordsToImport)
+    }
+
 </script>
+<!--
+@component AddressBook
+-->
 <h2>Decentralized Addressbook of {$orbitDB?.name}</h2>
 <Tabs class="tabs" bind:selected={$selectedTab}>
     <Tab label="Contacts" />
@@ -87,8 +115,8 @@
         <TabContent>
             <Grid fullWidth>
                 <Row>
-                    <Column><TextInput size="sm"/></Column>
-                    <Column><Button size="sm" on:click={() => {console.log("")}}>Scan Contact</Button></Column>
+                    <Column><TextInput size="sm" bind:value={scannedAddress}/></Column>
+                    <Column><Button size="sm" on:click={() => importDAL()}>Scan Contact</Button></Column>
                 </Row>
             </Grid>
             <ContactTable/>

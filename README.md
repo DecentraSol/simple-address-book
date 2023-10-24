@@ -9,10 +9,10 @@ Data arent't processed on our or other's servers and directly transmitted betwee
 P2P-Connection is established via the IFPS-network.
 
 ## TODO
-- [ ] improve jsdoc
-- [ ] write cypress test
 - [x] main db should be only writable by identity of ipfs / orbitdb node
 - [ ] shared db's should also be only writable ipfs id
+- [ ] improve jsdoc
+- [ ] write cypress test
 - [ ] add another textinput connect to a DAL (Decentralized Address Link) and
   - [ ] import its contents
 - [ ] when owner changes address - change should appear immediately on replication
