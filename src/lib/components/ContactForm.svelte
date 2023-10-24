@@ -32,7 +32,7 @@
                 {#if $selectedAddress.id}
                     <Button size="sm" on:click={() => updateContact()}>Update</Button>
                     <Button size="sm" on:click={() => deleteContact()}>Delete</Button>
-                    <Button size="sm" on:click={() => $selectedAddress= {}}>New</Button>
+                    <Button size="sm" on:click={() => $selectedAddress = {}}>New</Button>
                 {:else}
                     <Button size="sm" on:click={() => addContact()}>Add </Button>
                 {/if}

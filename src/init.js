@@ -31,17 +31,13 @@ export async function initOrbitDB(ipfsInstance,dbName) {
     const OrbitDBModul = await import('./modules/orbitdb-core/index.js');
     const createOrbitDB = OrbitDBModul.createOrbitDB;
     const IPFSAccessController = OrbitDBModul.IPFSAccessController;
+    const Documents = OrbitDBModul.Documents
     const orbitdb = await createOrbitDB({ ipfs  : ipfsInstance });
 
     const writePermission = ['*'] //orbitdb.identity.id //['*']
     const orbitDB = await orbitdb.open(
             dbName, {
-            type: 'keyvalue',
-            sync: true,
-            indexBy: 'id',
-            create: true,
-            //overwrite: false,
-            public: true,
+                Database: Documents({ indexBy: 'id'} ) ,
             AccessController: IPFSAccessController({write: writePermission})
         })
     return {orbitDB, IPFSAccessController}

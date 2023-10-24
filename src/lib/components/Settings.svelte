@@ -9,6 +9,13 @@
     let myId;
     let found;
     let accessWrite;
+    let peers;
+    function mapToSting(map){
+        let obj = ""
+        for (let [k,v] of map)
+            obj+=[k]+"<br>"
+        return obj
+    }
     $:{
         if($orbitDB && !found){ //only one time
             dbNameOrAddress = $orbitDB?.address
@@ -16,6 +23,7 @@
             nameOfDb = $orbitDB.name
             found = true
             accessWrite= $orbitDB.access.write
+            peers = mapToSting($ipfs.libp2p.pubsub.peers)
         }
     }
     $:console.log("dals in settings",$dals)
@@ -72,11 +80,15 @@
     </Row>
     <Row>
         <Column sm={1}>Access:</Column>
-        <Column sm={3}><TextInput disabled size="sm" bind:value={accessWrite} /></Column>
+        <Column sm={3}><TextInput disabled size="sm" bind:value={accessWrite    } /></Column>
     </Row>
     <Row>
         <Column sm={1}>Dals published:</Column>
         <Column sm={3}><TextInput disabled size="sm" bind:value={$dals.length} /></Column>
+    </Row>
+    <Row>
+        <Column sm={1}>IPFS peers:</Column>
+        <Column sm={3}>{peers}</Column>
     </Row>
     <Row>
         <Column sm={1}>Drop DB:</Column>

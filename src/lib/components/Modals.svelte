@@ -4,6 +4,7 @@
     import {createEventDispatcher} from "svelte";
     const dispatch = createEventDispatcher();
     import { clickToCopy } from "../../utils.js"
+    import { dbMyDal } from "../../stores.js"
 
     /**
      * @type {boolean}
@@ -18,6 +19,12 @@
     export let qrCodeData
 
     /**
+     * myDal
+     */
+    // export let dbMyDal;
+
+    let myContactData = []
+    /**
      * Generates a QR-Code with the given data
      * @param {string}data
      * @return {string} the
@@ -29,7 +36,21 @@
         return qr.createImgTag(6);
     }
 
+    /**
+     *
+     */
+    async function getMyData(db) {
+        if(!db) return
+        console.log("--->",db)
+        myContactData = await db.all()
+        // myContactData = dbAll[0]
+        console.log("myContactData",myContactData)
+    }
+    $: getMyData($dbMyDal)
+
+
     let text = '';
+
     function copySuccess(){
         text = "Copied!"
     }
@@ -46,7 +67,12 @@
        on:click:button--primary={ () => dispatch('close') }
        on:click:button--secondary={ () => dispatch('close') }
        on:close={()=>dispatch('close')}>
-    <label use:clickToCopy>{qrCodeData}</label>&nbsp;<span>{text}</span><br>
+    <label use:clickToCopy>{qrCodeData}</label>&nbsp;<span>{text}</span>
+    <p></p>
+    {#each myContactData as contact, index}
+        <li>{contact.value.firstname} {contact.value.lastname}</li>
+    {/each}
+
     {#if qrCodeData && qrCodeOpen}{@html generateQRCode(qrCodeData)}{/if}
 
 </Modal>

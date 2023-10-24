@@ -2,7 +2,7 @@
     import {DataTable} from "carbon-components-svelte";
     import {contacts, selectedRowIds} from "../../stores.js";
     import {generateQRForAddress} from "../../operations.js"
-    $:console.log("ContactTable selectedRowIds",$selectedRowIds)
+
 </script>
 
 <DataTable
@@ -11,7 +11,7 @@
             on:click={event => {
                     console.log(event.detail)
                     if (event?.detail?.cell?.key === 'qr') {
-                        generateQRForAddress(event.detail.row);
+                         generateQRForAddress(event.detail.row);
                     }
                 }}
             bind:selectedRowIds={$selectedRowIds}
@@ -22,10 +22,7 @@
                         { key: "zipcode", value: "ZipCode" },
                         { key: "city", value: "City" },
                         { key: "country", value: "Country" },
-                        { key: "qr", value: "" },
+                        { key: "own", value: "own" }
                 ]}
-            rows={$contacts.map(contact => ({
-                    ...contact,
-                    qr: '📷'
-                }))}
+            rows={$contacts}
     />

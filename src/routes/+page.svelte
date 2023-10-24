@@ -1,8 +1,8 @@
 <script>
     import { onMount } from "svelte";
-    import { ipfs, orbitDB, contacts, dals, selectedRowIds, selectedTab } from "../stores.js"
+    import { ipfs, orbitDB, dbMyDal, contacts, selectedRowIds, selectedTab } from "../stores.js"
     import { initIPFS, initOrbitDB } from "../init.js"
-    import {loadContact} from "../operations.js";
+    import { loadContact, generateQRForAddress } from "../operations.js";
     import ContactTable from "$lib/components/ContactTable.svelte";
     import ContactForm from "$lib/components/ContactForm.svelte";
     import {Tabs, Tab, TabContent, Button, TextInput, Column, Grid, Row} from "carbon-components-svelte";
@@ -32,6 +32,8 @@
             EXPERIMENTAL: { pubsub: true },
             preload: { "enabled": false },
             repo: './decad01' });
+
+        console.log("ipfs.pubsub",$ipfs.libp2p.pubsub)
         window.ipfs = $ipfs
         console.log("ipfs",$ipfs)
         // const topic = 'fruit-of-the-day'
@@ -44,45 +46,41 @@
         // $ipfs.libp2p.on('peer:disconnect', peerInfo => console.log("peerInfo",peerInfo))
 
         const initOrbitData = await initOrbitDB($ipfs)
-
-        // deCad = initOrbitData.deCad;
-        // console.log("deCad",deCad)
         if (!$orbitDB) $orbitDB = initOrbitData.orbitDB;
         localStorage.setItem("dbName",$orbitDB.address) //don't do this inside initOrbitDB since there we initialize DALs !
-
         console.log("orbitdb is",$orbitDB)
         window.orbitdb = $orbitDB
 
-        {
-            //TODO put this into a function to load all contacts after initializatino of database see Setting.svelte
-            const dbAll = await $orbitDB.all()
-            $contacts = dbAll.map(a => {
-                const newElement = a.value
-                return newElement
-            });
+        const dbAll = await $orbitDB.all()
+        $contacts = dbAll.map(a => {
+            const newElement = a.value
+            return newElement
+        });
 
-            //load our DALs
-            for (const i in $contacts) {
-                console.log("checking contact must be a DAL to others?", $contacts[i])
-                if($contacts[i].orbitDbAddress){
-                    console.log("initializing dal to ",$contacts[i].orbitDbAddress)
-                    const dalObject = await initOrbitDB($ipfs, $contacts[i].orbitDbAddress)
-                    $dals.push(dalObject.orbitDB)
-                    console.log("was loading dal's db",$dals.length)
+        const initOrbitDataMyDal = await initOrbitDB($ipfs,"mydal")
+        $dbMyDal = initOrbitDataMyDal.orbitDB
+        // $dbMyDal.drop()
+        const myRecords = await $dbMyDal.all()
 
-                }
-            }
 
-            $orbitDB.events.on("update", async (entry) => {
-                console.log(entry) //it is not necessary to add this to the contacts because it is allready insdie
-                const dbAll = await $orbitDB.all()
+        console.log("initialized myDal",$dbMyDal.address)
+        console.log("dbMyDal ",$dbMyDal)
+        console.log("myRecords",myRecords)
 
-                $contacts = dbAll.map(a => {
-                    const newElement = a.value
-                    return newElement
-                });
-            })
-        }
+
+        $dbMyDal.events.on("update", async (entry) => {
+            console.log(entry) //it is not necessary to add this to the contacts because it is allready insdie
+            const dbAll = await $dbMyDal.all()
+            console.log("dbAll",dbAll)
+            $contacts.push(dbAll[0].value)
+            $contacts = $contacts
+        })
+
+        $orbitDB.events.on("update", async (entry) => {
+            console.log(entry) //it is not necessary to add this to the contacts because it is allready insdie
+            $contacts = await  $orbitDB.all()
+        })
+
         console.log("$contacts",$contacts)
     });
 
@@ -94,12 +92,20 @@
         const importDB = dbImportObject.orbitDB
         console.log("importing scanned DAL", importDB.address)
         const recordsToImport = await importDB.all()
-        importDB.events.on("update", async (entry) => {
-            console.log("importDB-entry",entry) //it is not necessary to add this to the contacts because it is allready insdie
-            const dbAll = await importDB.all()
-            console.log("importDB:dbAll",dbAll)
-        })
-        console.log("recordsToImport",recordsToImport)
+        console.log("importDB.name",importDB.name)
+        console.log("importDB",importDB)
+        console.log("importDB",importDB.events)
+
+        for (const recordsToImportKey in recordsToImport) {
+            const key = recordsToImport[recordsToImportKey].key
+            const value = recordsToImport[recordsToImportKey].value
+            delete value.own
+            value.orbitDB=scannedAddress
+            value.updated=new Date()
+            $contacts.push(value)
+        }
+        $contacts = $contacts
+        console.log("$contacts",$contacts)
     }
 
 </script>
@@ -109,7 +115,7 @@
 <h2>Decentralized Addressbook of {$orbitDB?.name}</h2>
 <Tabs class="tabs" bind:selected={$selectedTab}>
     <Tab label="Contacts" />
-    <Tab label="Add Contact" />
+    <Tab label="My Address" />
     <Tab label="Settings" />
     <svelte:fragment slot="content">
         <TabContent>
@@ -117,6 +123,7 @@
                 <Row>
                     <Column><TextInput size="sm" bind:value={scannedAddress}/></Column>
                     <Column><Button size="sm" on:click={() => importDAL()}>Scan Contact</Button></Column>
+                    <Column><Button size="sm" on:click={() => generateQRForAddress($dbMyDal.address)}>My QR-Code</Button></Column>
                 </Row>
             </Grid>
             <ContactTable/>
