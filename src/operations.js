@@ -65,7 +65,7 @@ export async function addContact() {
     let hash
     if(_selectedAddress.own){
         const all = await _dbMyDal.all()
-        all.map((address)=>_dbMyDal.del(address.id)) //dropping all other data for now, maybe we allow more then one address later
+        all.map((address)=>_dbMyDal.del(address.value.id)) //dropping all other data for now, maybe we allow more then one address later
         hash = await _dbMyDal.put(_selectedAddress);
     }
     else

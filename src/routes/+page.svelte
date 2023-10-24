@@ -60,13 +60,13 @@
         const initOrbitDataMyDal = await initOrbitDB($ipfs,"mydal")
         $dbMyDal = initOrbitDataMyDal.orbitDB
         // $dbMyDal.drop()
-        const myRecords = await $dbMyDal.all()
-
+        const myRecords = await $dbMyDal.all() //TODO add tem to $contacts
+        myRecords.map(a => $contacts.push(a.value));
+        $contacts = $contacts
 
         console.log("initialized myDal",$dbMyDal.address)
         console.log("dbMyDal ",$dbMyDal)
         console.log("myRecords",myRecords)
-
 
         $dbMyDal.events.on("update", async (entry) => {
             console.log(entry) //it is not necessary to add this to the contacts because it is allready insdie
