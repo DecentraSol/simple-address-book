@@ -2,7 +2,7 @@
     import { onMount } from "svelte";
     import { ipfs, orbitDB, contacts, selectedRowIds, selectedTab } from "../stores.js"
     import { initIPFS, initOrbitDB } from "../init.js"
-    import {loadContact, updateContact} from "../operations.js";
+    import {loadContact} from "../operations.js";
     import ContactTable from "$lib/components/ContactTable.svelte";
     import ContactForm from "$lib/components/ContactForm.svelte";
     import {Tabs, Tab, TabContent, Button, TextInput, Column, Grid, Row} from "carbon-components-svelte";
@@ -32,20 +32,22 @@
             repo: './decad01' });
         window.ipfs = $ipfs
         console.log("ipfs",$ipfs)
-        const topic = 'fruit-of-the-day'
-        const receiveMsg = (msg) => console.log(msg.toString())
-
-        await $ipfs.pubsub.subscribe(topic, receiveMsg)
-        console.log(`subscribed to ${topic}`)
-
-        $ipfs.libp2p.on('peer:connect', peerInfo => console.log("peerInfo",peerInfo))
-        $ipfs.libp2p.on('peer:disconnect', peerInfo => console.log("peerInfo",peerInfo))
+        // const topic = 'fruit-of-the-day'
+        // const receiveMsg = (msg) => console.log(msg.toString())
+        //
+        // await $ipfs.pubsub.subscribe(topic, receiveMsg)
+        // console.log(`subscribed to ${topic}`)
+        //
+        // $ipfs.libp2p.on('peer:connect', peerInfo => console.log("peerInfo",peerInfo))
+        // $ipfs.libp2p.on('peer:disconnect', peerInfo => console.log("peerInfo",peerInfo))
 
         const initOrbitData = await initOrbitDB($ipfs)
 
         // deCad = initOrbitData.deCad;
         // console.log("deCad",deCad)
         if (!$orbitDB) $orbitDB = initOrbitData.orbitDB;
+        localStorage.setItem("dbName",$orbitDB.address) //don't do this inside initOrbitDB since there we initialize DALs !
+
         console.log("orbitdb is",$orbitDB)
         window.orbitdb = $orbitDB
 
@@ -53,17 +55,30 @@
             console.log(peerId, (await $ipfs.id()).id)
         })
 
-        const dbAll = await $orbitDB.all()
-        $contacts = dbAll.map(a => {
-            const newElement = a.value
-            return newElement
-        });
+        {
+            //TODO put this into a function to load all contacts after initializatino of database see Setting.svelte
+            const dbAll = await $orbitDB.all()
+            $contacts = dbAll.map(a => {
+                const newElement = a.value
+                return newElement
+            });
+
+            $orbitDB.events.on("update", async (entry) => {
+                console.log(entry) //it is not necessary to add this to the contacts because it is allready insdie
+                const dbAll = await $orbitDB.all()
+
+                $contacts = dbAll.map(a => {
+                    const newElement = a.value
+                    return newElement
+                });
+            })
+        }
         console.log("$contacts",$contacts)
     });
 
     $: loadContact($selectedRowIds[0]) //loads the selected contact into the contact form
 </script>
-<h2>Decentralized Addressbook</h2>
+<h2>Decentralized Addressbook of {$orbitDB?.name}</h2>
 <Tabs class="tabs" bind:selected={$selectedTab}>
     <Tab label="Contacts" />
     <Tab label="Add Contact" />

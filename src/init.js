@@ -44,24 +44,6 @@ export async function initOrbitDB(ipfsInstance,dbName) {
             public: true,
             AccessController: IPFSAccessController({write: writePermission})
         })
-    localStorage.setItem("dbName",orbitDB.address)
-
-    const dbAll = await orbitDB.all()
-    contacts.set(dbAll.map(a => {
-        const newElement = a.value
-        return newElement
-    }));
-
-    orbitDB.events.on("update", async (entry) => {
-        console.log(entry) //it is not necessary to add this to the contacts because it is allready insdie
-        const dbAll = await orbitDB.all()
-
-        contacts.set(dbAll.map(a => {
-            const newElement = a.value
-            return newElement
-        }));
-    })
-
     return {orbitDB, IPFSAccessController}
 }
 
