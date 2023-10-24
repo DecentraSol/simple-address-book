@@ -60,8 +60,7 @@ export async function loadContact(hash) {
 
 
 export async function addContact() {
-    const _id = await sha256(JSON.stringify(_selectedAddress));
-    _selectedAddress.id = _id;
+    _selectedAddress.id = await sha256(JSON.stringify(_selectedAddress));
     let hash
     if(_selectedAddress.own){
         const all = await _dbMyDal.all()

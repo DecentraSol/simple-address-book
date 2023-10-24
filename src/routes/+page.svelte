@@ -71,14 +71,15 @@
         $dbMyDal.events.on("update", async (entry) => {
             console.log(entry) //it is not necessary to add this to the contacts because it is allready insdie
             const dbAll = await $dbMyDal.all()
-            console.log("dbAll",dbAll)
-            $contacts.push(dbAll[0].value)
-            $contacts = $contacts
+            if(dbAll.length>0) {
+                console.log("dbAll",dbAll)
+                $contacts.push(dbAll[0].value) //TODO this leeds to duplicate keys - only add whatis not in yet
+            }
         })
 
         $orbitDB.events.on("update", async (entry) => {
             console.log(entry) //it is not necessary to add this to the contacts because it is allready insdie
-            $contacts = await  $orbitDB.all()
+            $contacts = await  $orbitDB.all() //TODO this overwrites everything - only add what is not in yet
         })
 
         console.log("$contacts",$contacts)
