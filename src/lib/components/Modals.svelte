@@ -4,7 +4,7 @@
     import {createEventDispatcher} from "svelte";
     const dispatch = createEventDispatcher();
     import { clickToCopy } from "../../utils.js"
-    import {selectedAddress} from "../../stores.js";
+
     /**
      * @type {boolean}
      * when true qr-code modal is open

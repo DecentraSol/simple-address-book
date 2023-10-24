@@ -9,15 +9,18 @@ Data arent't processed on our or other's servers and directly transmitted betwee
 P2P-Connection is established via the IFPS-network.
 
 ## TODO
+- main db should be only writable by id of ipfs node
+- shared db's should also be only writable ipfs id
+- add another textinput connect to a DAL (Decentralized Address Link) and
+- import its contents
+- when owner changes address - change should appear immediately on replication
 - qr-code must be scanable by standard mobile camera app
   - publish a link to an IPFS published version of the app 
   - with a query parameter with Alice's DAL
-- make address book db accessible via entering another orbitdb's address
-  - add a text input 
-  - when changing then verify address 
-  - and load db 
-- add another textinput connect to a DAL (Decentralized Address Link) and 
-  - import its contents
-  - when owner changes address - change should appear immediately on replication 
+- [x] make address book db accessible via entering another address books address
+  - [x] add a text input 
+  - [x] when changing then verify address 
+  - [x] and load db 
+
 - when sharing an address display its contents in modal.
 - pinning service / backup service 

@@ -1,10 +1,11 @@
 <script>
     import "carbon-components-svelte/css/all.css";
-    import {ToastNotification} from "carbon-components-svelte";
+    import {Theme,ToastNotification} from "carbon-components-svelte";
     import Modals from "$lib/components/Modals.svelte";
     import { showNotification, notificationMessage,qrCodeOpen,qrCodeData } from "../stores.js"
+    let theme = "g90";
 </script>
-
+<Theme bind:theme />
 <Modals on:close={()=>$qrCodeOpen=false} qrCodeOpen={$qrCodeOpen} qrCodeData={$qrCodeData} />
 
 {#if $showNotification}

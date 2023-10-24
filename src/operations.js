@@ -1,10 +1,15 @@
 import {sha256,notify} from "./utils.js";
-import {contacts, orbitDB, ipfs, selectedAddress, qrCodeData, qrCodeOpen} from "./stores.js";
+import {contacts, orbitDB, ipfs, selectedAddress, selectedTab, qrCodeData, qrCodeOpen} from "./stores.js";
 import {initOrbitDB} from "./init.js"
 
 let _ipfs;
 ipfs.subscribe((value) => {
     _ipfs = value
+})
+
+let _selectedTab;
+selectedTab.subscribe((value) => {
+    _selectedTab = value
 })
 
 let _selectedAddress;
@@ -40,6 +45,7 @@ export async function loadContact(hash) {
     if (!orbitDB || !_orbitDB) return;
     const address = _contacts.find(obj => obj.id === hash) || await _orbitDB.get(hash) || {}
     selectedAddress.set(address)
+    selectedTab.set(1)
 }
 
 /**
@@ -52,6 +58,7 @@ export async function addContact() {
     _selectedAddress.id = id;
     const hash = await _orbitDB.put(id, _selectedAddress);
     selectedAddress.set({})
+    selectedTab.set(0)
     notify(`Contact added successfully! ${hash}`);
 }
 
@@ -73,16 +80,19 @@ export async function updateContact(contact) {
     //don't notify when creating a qr-code
     if(!contact) notify(`Contact added successfully! ${updateHash}`)
     selectedAddress.set({})
+    selectedTab.set(0)
     return {deletedHash,updateHash}
 }
 
 /**
- * DeleteContact
+ * deletes a contact by id
  * @returns {Promise<{deletedHash: *}>}
  */
 export async function deleteContact() {
     const deletedHash = await _orbitDB.del(_selectedAddress.id)
     notify(`Contact deleted successfully! ${deletedHash}`)
+    selectedAddress.set({})
+    selectedTab.set(0)
     return {deletedHash}
 }
 
@@ -106,10 +116,12 @@ export async function createNewOrbitDBWithAddress(address) {
 }
 
 /**
- * Alice creates a new OrbitDB with her contact data.
- * the resulting address will be used to create a qr code which Bob can scan or receive via email, chat, etc.
- * the QRCode-Modal is opening
- * Bob is adding the scanned db to its subscription list
+ * 1. Alice creates a new OrbitDB with her contact data.
+ * the resulting address will be used to create a qr code which Bob can scan or
+ * receive via email, chat, etc.
+ *
+ * 2. the QRCode-Modal is opening
+ * 3. Bob is adding the scanned db to its subscription list the contacts (not stored in own orbitdb)
  *
  * @param {object} contact
  * @returns {Promise<void>}
@@ -118,8 +130,5 @@ export async function generateQRForAddress(contact) {
     contact.orbitDbAddress = await createNewOrbitDBWithAddress(contact);
     await updateContact(contact);
     qrCodeData.set(contact.orbitDbAddress)
-    console.log("open ",contact.orbitDbAddress)
-    console.log("_qrCodeOpen",_qrCodeOpen)
     qrCodeOpen.set(true)
-    console.log("_qrCodeOpen",_qrCodeOpen)
 }

@@ -1,12 +1,12 @@
 <script>
     import { onMount } from "svelte";
-    import { ipfs, orbitDB, contacts, selectedRowIds } from "../stores.js"
+    import { ipfs, orbitDB, contacts, selectedRowIds, selectedTab } from "../stores.js"
     import { initIPFS, initOrbitDB } from "../init.js"
-    import { loadContact } from "../operations.js";
+    import {loadContact, updateContact} from "../operations.js";
     import ContactTable from "$lib/components/ContactTable.svelte";
     import ContactForm from "$lib/components/ContactForm.svelte";
-
-    // let deCad; //the address of the main orbitDB (stored also in localstorage)
+    import {Tabs, Tab, TabContent, Button, TextInput, Column, Grid, Row} from "carbon-components-svelte";
+    import Settings from "$lib/components/Settings.svelte";
 
     onMount(async () => {
         const config1 = {
@@ -49,30 +49,11 @@
         console.log("orbitdb is",$orbitDB)
         window.orbitdb = $orbitDB
 
-
-        $orbitDB.events.on("update", async (entry) => {
-            console.log(entry)
-            const dbAll = await $orbitDB.all()
-
-            // for (let i = 0; i < dbAll.length; i++) {
-            //     dbAll[i].id =  await sha256(JSON.stringify(dbAll[i]))
-            // }
-
-            $contacts = dbAll.map(a => {
-                const newElement = a.value
-                return newElement
-            });
-        })
-
         $orbitDB.events.on('join', async (peerId, heads) => {
             console.log(peerId, (await $ipfs.id()).id)
         })
 
         const dbAll = await $orbitDB.all()
-        for (let i = 0; i < dbAll.length; i++) {
-            console.log("dbAll[i]",dbAll[i])
-           // dbAll[i].id =  await sha256(JSON.stringify(dbAll[i])) //TODO add sha256 only beofre adding
-        }
         $contacts = dbAll.map(a => {
             const newElement = a.value
             return newElement
@@ -80,31 +61,28 @@
         console.log("$contacts",$contacts)
     });
 
-
-    $: {
-        if($ipfs!==undefined){
-            const loadPeers = async () => {
-                const peerInfos = await $ipfs.swarm.peers()
-                console.log("peerInfos",peerInfos)
-
-                // const topic = 'fruit-of-the-day'
-                //
-                // const peerIds = await $ipfs.pubsub.peers(topic)
-                // console.log(peerIds)
-            }
-            loadPeers()
-
-            // $ipfs.libp2p.addEventListener("peer:connect", ev => {
-            //     console.log(`[peer:connect on ${$ipfs.libp2p.peerId}]`, ev.detail.toString());
-            //   //  $peers.push(ev.detail.toString())
-            //     //testString.push(ev.detail.toString())
-            //     //	testString.push("nico")
-            //     //	console.log(testString)
-            // });
-        }
-    }
     $: loadContact($selectedRowIds[0]) //loads the selected contact into the contact form
 </script>
-<h2>Decentralized Addressbook</h2> {$orbitDB?.address}
-<ContactForm/>
-<ContactTable/>
+<h2>Decentralized Addressbook</h2>
+<Tabs bind:selected={$selectedTab}>
+    <Tab label="Contacts" />
+    <Tab label="Add Contact" />
+    <Tab label="Settings" />
+    <svelte:fragment slot="content">
+        <TabContent>
+            <Grid fullWidth>
+                <Row>
+                    <Column><TextInput/></Column>
+                   <Column><Button on:click={() => {console.log("")}}>Scan Contact</Button></Column>
+                </Row>
+            </Grid>
+            <ContactTable/>
+
+
+        </TabContent>
+        <TabContent><ContactForm/></TabContent>
+        <TabContent><Settings/></TabContent>
+    </svelte:fragment>
+</Tabs>
+
+

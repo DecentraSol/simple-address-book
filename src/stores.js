@@ -11,6 +11,7 @@ export const qrCodeOpen = writable(false)
 export const qrCodeData = writable()
 
 export const selectedRowIds = writable([])
+export const selectedTab = writable(0)
 export const selectedAddress = writable( {
     firstname: "",
     lastname: "",

@@ -1,3 +1,8 @@
+import {contacts, orbitDB} from "./stores.js";
+let _contacts;
+contacts.subscribe((value) => {
+    _contacts = value
+})
 /**
  * Initializing IPFS-Core
  * @returns {Promise<*>}
@@ -17,17 +22,20 @@ const DEFAULT_DB_NAME = "deCad03";
  * IPFSAccessController: (*|(function({write: *, storage: *}=): function({orbitdb: *, identities: *, address: *}): Promise<{address: *, canAppend: function(*): Promise<boolean|*>, type: string, write: *}>))}>}
  */
 export async function initOrbitDB(ipfsInstance,dbName) {
-    const _dbName = dbName?dbName:DEFAULT_DB_NAME
+
+    if(dbName===undefined)
+        dbName = localStorage.getItem("dbName");
+    if(dbName===undefined || dbName === null) dbName = DEFAULT_DB_NAME
+    console.log("dbName",dbName)
+
     const OrbitDBModul = await import('./modules/orbitdb-core/index.js');
     const createOrbitDB = OrbitDBModul.createOrbitDB;
     const IPFSAccessController = OrbitDBModul.IPFSAccessController;
     const orbitdb = await createOrbitDB({ ipfs  : ipfsInstance });
 
-    const deCad = localStorage.getItem(_dbName);
-    console.log("_dbName",_dbName)
-    console.log("deCad",deCad)
+
     const orbitDB = await orbitdb.open(
-        deCad?deCad:_dbName, {
+            dbName, {
             type: 'keyvalue',
             sync: true,
             indexBy: 'id',
@@ -36,22 +44,25 @@ export async function initOrbitDB(ipfsInstance,dbName) {
             public: true,
             AccessController: IPFSAccessController({write: ['*']})
         })
-    localStorage.setItem(_dbName,orbitDB.address)
+    localStorage.setItem("dbName",orbitDB.address)
 
-    // orbitDB.events.on('join', async (peerId, heads) => {
-    //     // The peerId of the ipfs1 node.
-    //     console.log(peerId, (await ipfsInstance.id()).id)
-    // })
+    const dbAll = await orbitDB.all()
+    contacts.set(dbAll.map(a => {
+        const newElement = a.value
+        return newElement
+    }));
 
-// Listen for any updates to db2. This is especially useful when listening for
-// new heads that are available on db1.
-// If we want to listen for new data on db2, add an "update" listener to db1.
-    orbitDB.events.on('update', async (entry) => {
-        // Full replication is achieved by explicitly retrieving all records from db1.
-        // console.log(await orbitDB.all())
+    orbitDB.events.on("update", async (entry) => {
+        console.log(entry) //it is not necessary to add this to the contacts because it is allready insdie
+        const dbAll = await orbitDB.all()
+
+        contacts.set(dbAll.map(a => {
+            const newElement = a.value
+            return newElement
+        }));
     })
 
-    return {orbitDB, IPFSAccessController, deCad}
+    return {orbitDB, IPFSAccessController}
 }
 
 export async function dropDB(orbitDB){
