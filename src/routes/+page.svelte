@@ -64,7 +64,7 @@
     $: loadContact($selectedRowIds[0]) //loads the selected contact into the contact form
 </script>
 <h2>Decentralized Addressbook</h2>
-<Tabs bind:selected={$selectedTab}>
+<Tabs class="tabs" bind:selected={$selectedTab}>
     <Tab label="Contacts" />
     <Tab label="Add Contact" />
     <Tab label="Settings" />
@@ -72,17 +72,22 @@
         <TabContent>
             <Grid fullWidth>
                 <Row>
-                    <Column><TextInput/></Column>
-                   <Column><Button on:click={() => {console.log("")}}>Scan Contact</Button></Column>
+                    <Column><TextInput size="sm"/></Column>
+                    <Column><Button size="sm" on:click={() => {console.log("")}}>Scan Contact</Button></Column>
                 </Row>
             </Grid>
             <ContactTable/>
-
-
         </TabContent>
         <TabContent><ContactForm/></TabContent>
         <TabContent><Settings/></TabContent>
     </svelte:fragment>
 </Tabs>
-
+<style>
+    h2 {
+        margin: 1rem;
+    }
+    .tabs {
+        margin: 1rem;
+    }
+</style>
 

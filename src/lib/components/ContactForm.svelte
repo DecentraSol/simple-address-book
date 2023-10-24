@@ -30,11 +30,11 @@
         <Row>
             <Column>
                 {#if $selectedAddress.id}
-                    <Button on:click={() => updateContact()}>Update</Button>
-                    <Button on:click={() => deleteContact()}>Delete</Button>
-                    <Button on:click={() => $selectedAddress= {}}>New</Button>
+                    <Button size="sm" on:click={() => updateContact()}>Update</Button>
+                    <Button size="sm" on:click={() => deleteContact()}>Delete</Button>
+                    <Button size="sm" on:click={() => $selectedAddress= {}}>New</Button>
                 {:else}
-                    <Button on:click={() => addContact()}>Add </Button>
+                    <Button size="sm" on:click={() => addContact()}>Add </Button>
                 {/if}
             </Column>
         </Row>

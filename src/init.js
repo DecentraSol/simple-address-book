@@ -33,7 +33,7 @@ export async function initOrbitDB(ipfsInstance,dbName) {
     const IPFSAccessController = OrbitDBModul.IPFSAccessController;
     const orbitdb = await createOrbitDB({ ipfs  : ipfsInstance });
 
-
+    const writePermission = orbitdb.identity.id //['*']
     const orbitDB = await orbitdb.open(
             dbName, {
             type: 'keyvalue',
@@ -42,7 +42,7 @@ export async function initOrbitDB(ipfsInstance,dbName) {
             create: true,
             //overwrite: false,
             public: true,
-            AccessController: IPFSAccessController({write: ['*']})
+            AccessController: IPFSAccessController({write: writePermission})
         })
     localStorage.setItem("dbName",orbitDB.address)
 
