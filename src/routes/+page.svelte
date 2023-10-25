@@ -58,23 +58,27 @@
             return newElement
         });
 
-        const _dbMyDal = await initOrbitDB($ipfs,"mydal")
-        $dbMyDal = _dbMyDal
-
+        $dbMyDal  = await initOrbitDB($ipfs,$orbitDB.address+"/mydal")
         const myRecords = await $dbMyDal.all() //TODO add tem to $contacts
         myRecords.map(a => $contacts.push(a.value));
         $contacts = $contacts
 
         console.log("initialized myDal",$dbMyDal.address)
         console.log("dbMyDal ",$dbMyDal)
-        console.log("myRecords",myRecords)
+        console.log("dbMyDal-myRecords",myRecords)
+        $orbitDB.events.on('join',async () => {
+            console.log("connected orbit")
+            // Query
 
-        $orbitDB.events.on("replicated", async (dbAddress, count, newFeed, d) => {
-            console.log("replicated orbitDB")
+            for await (const record of $orbitDB.iterator()) {
+                console.log("orbitDB-record",record)
+            }
         })
-
-        $dbMyDal.events.on("replicated", async (dbAddress, count, newFeed, d) => {
-            console.log("replicated dbMyDal")
+        $dbMyDal.events.on('join', async () => {
+            console.log("connected mydal")
+            for await (const record of $dbMyDal.iterator()) {
+                console.log("dbMyDal-record",record)
+            }
         })
 
         $dbMyDal.events.on("update", async (entry) => {
@@ -103,10 +107,17 @@
         const importDB = await initOrbitDB($ipfs, scannedAddress)
         console.log("importing scanned DAL", importDB.address)
         const recordsToImport = await importDB.all()
+        await importDB.sync.start()
+        const peers = importDB.sync.peers
+        console.log("peers",peers)
+        // importDB.sync.events.on( x => console.log("x"+x))
+
         console.log("importDB.name",importDB.name)
         console.log("importDB",importDB)
         console.log("importDB",importDB.events)
-
+        for await (const record of importDB.iterator()) {
+            console.log("orbitDB-record",record)
+        }
         for (const recordsToImportKey in recordsToImport) {
             const key = recordsToImport[recordsToImportKey].key
             const value = recordsToImport[recordsToImportKey].value
