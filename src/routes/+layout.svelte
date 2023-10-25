@@ -12,8 +12,3 @@
     <ToastNotification kind="success" title="Success" subtitle={$notificationMessage} />
 {/if}
 <slot></slot>
-<style>
-    button {
-        margin: 1rem;
-    }
-</style>

@@ -10,7 +10,7 @@ P2P-Connection is established via the IFPS-network.
 
 ## TODO
 - [x] main db should be only writable by identity of ipfs / orbitdb node
-- [ ] write cypress test with two browsers (alice & bob)
+- [ ] write cypress/playwright test with two browsers (alice & bob)
 - [ ] shared db's should also be only writable ipfs id
 - [ ] improve jsdoc
 - [ ] delete contact & drop db should have a confirmation dialog
