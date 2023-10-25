@@ -13,8 +13,9 @@ P2P-Connection is established via the IFPS-network.
 - [ ] write cypress test with two browsers (alice & bob)
 - [ ] shared db's should also be only writable ipfs id
 - [ ] improve jsdoc
-- [ ] add another textinput connect to a DAL (Decentralized Address Link) and
-  - [ ] import its contents
+- [ ] delete contact & drop db should have a confirmation dialog
+- [x] add textinput connect to a DAL (Decentralized Address Link) and
+  - [x] import its contents
 - [ ] when owner changes address - change should appear immediately on replication
 - [ ] qr-code must be scanable by standard mobile camera app
   - [ ] use a link to an IPFS(?) published version of the app 
@@ -22,7 +23,10 @@ P2P-Connection is established via the IFPS-network.
 - [x] make address book db accessible via entering another address books address
   - [x] add a text input 
   - [x] when changing then verify address 
-  - [x] and load db 
-
-- when sharing an address display its contents in modal.
-- pinning service / backup service 
+  - [x] and load db
+- [x] when sharing an address display own address or name in modal.
+- [ ] is it possible to run signaling and peer connection over current IFPS network infrastructure instead of own WebRTC-signaling stars?  
+- [ ] backup service 
+- [ ] decentralized pinning concept via mobiles with signaling features
+  - [ ] mobile devices should be able to pin others db's and get paid for it
+  - [ ] mobile devices should play as signaling server by offering there WebRTC signaling data on a blockchain (and get paid for it by others)
