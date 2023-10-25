@@ -1,7 +1,7 @@
 <script>
     import { Button, TextInput, Column, Grid, Row } from "carbon-components-svelte";
     import {initOrbitDB} from "../../init.js"
-    import { ipfs, orbitDB, contacts, dals } from "../../stores.js"
+    import { ipfs, orbitDB, contacts,dbMyDal } from "../../stores.js"
     import {notify} from "../../utils.js";
 
     let dbNameOrAddress;
@@ -26,12 +26,8 @@
             peers = mapToSting($ipfs.libp2p.pubsub.peers)
         }
     }
-    $:console.log("dals in settings",$dals)
-
     const changeAddress = async () => {
-            const dbObject =  await initOrbitDB($ipfs,dbNameOrAddress)
-
-            $orbitDB = dbObject.orbitDB
+            $orbitDB  =  await initOrbitDB($ipfs,dbNameOrAddress)
             localStorage.setItem("dbName",$orbitDB.address)
         {
             //TODO put this into a function to load all contacts after initializatino of database
@@ -53,9 +49,9 @@
         }
 
 
-            dbNameOrAddress = $orbitDB.address
-            nameOfDb = $orbitDB.name
-            notify(`main addres db loaded! address:${$orbitDB.address}`);
+        dbNameOrAddress = $orbitDB.address
+        nameOfDb = $orbitDB.name
+        notify(`main addres db loaded! address:${$orbitDB.address}`);
     }
 
 </script>
@@ -66,24 +62,25 @@
 -->
 <Grid>
     <Row>
-        <Column sm={3}><TextInput labelText="DB name" dsize="sm" isabled size="sm" bind:value={nameOfDb} /></Column>
+        <Column sm={3}><TextInput labelText="DB name" dsize="sm" readonly size="sm" bind:value={nameOfDb} /></Column>
     </Row>
     <Row>
         <Column sm={2}><TextInput labelText="Current DB-Address" size="sm" bind:value={dbNameOrAddress} /></Column>
         <Column sm={1}><Button size="sm" on:click={changeAddress}>Load</Button></Column>
     </Row>
     <Row>
-        <Column sm={3}><TextInput labelText="My Identity" disabled size="sm" bind:value={myId} /></Column>
+        <Column sm={3}><TextInput labelText="My Identity" readonly size="sm" bind:value={myId} /></Column>
     </Row>
     <Row>
-        <Column sm={3}><TextInput labelText="Access" disabled size="sm" bind:value={accessWrite} /></Column>
+        <Column sm={3}><TextInput labelText="Access" readonly size="sm" bind:value={accessWrite} /></Column>
     </Row>
     <Row>
-        <Column sm={3}><TextInput labelText="IPFS peers" disabled size="sm" bind:value={peers} /></Column>
+        <Column sm={3}><TextInput labelText="IPFS peers" readonly size="sm" bind:value={peers} /></Column>
     </Row>
     <Row>
         <Column sm={3}><Button size="sm" on:click={()=>{
             $orbitDB.drop()
+            $dbMyDal.drop()
             notify("Db dropped!")
         }}>Drop DB</Button></Column>
     </Row>

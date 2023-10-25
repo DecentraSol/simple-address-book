@@ -45,8 +45,9 @@
         // $ipfs.libp2p.on('peer:connect', peerInfo => console.log("peerInfo",peerInfo))
         // $ipfs.libp2p.on('peer:disconnect', peerInfo => console.log("peerInfo",peerInfo))
 
-        const initOrbitData = await initOrbitDB($ipfs)
-        if (!$orbitDB) $orbitDB = initOrbitData.orbitDB;
+        const _orbitDB = await initOrbitDB($ipfs)
+        if (!$orbitDB) $orbitDB = _orbitDB;
+
         localStorage.setItem("dbName",$orbitDB.address) //don't do this inside initOrbitDB since there we initialize DALs !
         console.log("orbitdb is",$orbitDB)
         window.orbitdb = $orbitDB
@@ -57,9 +58,9 @@
             return newElement
         });
 
-        const initOrbitDataMyDal = await initOrbitDB($ipfs,"mydal")
-        $dbMyDal = initOrbitDataMyDal.orbitDB
-        // $dbMyDal.drop()
+        const _dbMyDal = await initOrbitDB($ipfs,"mydal")
+        $dbMyDal = _dbMyDal
+
         const myRecords = await $dbMyDal.all() //TODO add tem to $contacts
         myRecords.map(a => $contacts.push(a.value));
         $contacts = $contacts
@@ -68,12 +69,22 @@
         console.log("dbMyDal ",$dbMyDal)
         console.log("myRecords",myRecords)
 
+        $orbitDB.events.on("replicated", async (dbAddress, count, newFeed, d) => {
+            console.log("replicated orbitDB")
+        })
+
+        $dbMyDal.events.on("replicated", async (dbAddress, count, newFeed, d) => {
+            console.log("replicated dbMyDal")
+        })
+
         $dbMyDal.events.on("update", async (entry) => {
             console.log(entry) //it is not necessary to add this to the contacts because it is allready insdie
             const dbAll = await $dbMyDal.all()
             if(dbAll.length>0) {
+                console.log("$dbMyDal",$dbMyDal)
                 console.log("dbAll",dbAll)
                 $contacts.push(dbAll[0].value) //TODO this leeds to duplicate keys - only add whatis not in yet
+                $contacts = $contacts
             }
         })
 
@@ -89,8 +100,7 @@
 
     const importDAL = async () => {
 
-        const dbImportObject = await initOrbitDB($ipfs, scannedAddress)
-        const importDB = dbImportObject.orbitDB
+        const importDB = await initOrbitDB($ipfs, scannedAddress)
         console.log("importing scanned DAL", importDB.address)
         const recordsToImport = await importDB.all()
         console.log("importDB.name",importDB.name)
