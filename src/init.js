@@ -12,7 +12,7 @@ export async function initIPFS(config) {
     const IPFS = IPFSmodule.default;
     return await IPFS.create(config);
 }
-const DEFAULT_DB_NAME = "deCad03";
+const DEFAULT_DB_NAME = "deCad";
 /**
  * Inits an OrbitDb on IPFS with a given dbName
  *
@@ -34,7 +34,7 @@ export async function initOrbitDB(ipfsInstance,dbName) {
     const Documents = OrbitDBModul.Documents
     const orbitdb = await createOrbitDB({ ipfs  : ipfsInstance });
 
-    const writePermission = ['*'] //orbitdb.identity.id //['*']
+    const writePermission = [orbitdb.identity.id] // //['*']
     const orbitDB = await orbitdb.open(
             dbName, {
                 Database: Documents({ indexBy: 'id'} ) ,

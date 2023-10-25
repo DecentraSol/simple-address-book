@@ -67,8 +67,9 @@
        on:click:button--primary={ () => dispatch('close') }
        on:click:button--secondary={ () => dispatch('close') }
        on:close={()=>dispatch('close')}>
-    <label
-            use:clickToCopy>{qrCodeData}</label>&nbsp;<span>{text}</span>
+
+    <label for="qrCodeModal"
+            use:clickToCopy>{qrCodeData}</label>&nbsp;<span id="qrCodeModal">{text}</span>
     <p></p>
     {#each myContactData as contact, index}
         <li>{contact.value.firstname} {contact.value.lastname}</li>
