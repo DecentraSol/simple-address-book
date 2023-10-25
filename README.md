@@ -10,9 +10,9 @@ P2P-Connection is established via the IFPS-network.
 
 ## TODO
 - [x] main db should be only writable by identity of ipfs / orbitdb node
+- [ ] write cypress test with two browsers (alice & bob)
 - [ ] shared db's should also be only writable ipfs id
 - [ ] improve jsdoc
-- [ ] write cypress test
 - [ ] add another textinput connect to a DAL (Decentralized Address Link) and
   - [ ] import its contents
 - [ ] when owner changes address - change should appear immediately on replication

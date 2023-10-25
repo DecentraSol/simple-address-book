@@ -139,7 +139,7 @@
     }
     :global(.bx--btn, input) {
         margin-bottom: 1rem;
-        margin-top: 1rem;
+
     }
     :global(.tabs) {
         margin: 1rem;
