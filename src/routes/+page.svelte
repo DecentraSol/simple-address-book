@@ -1,11 +1,11 @@
 <script>
     import { onMount } from "svelte";
+    import {Tabs, Tab, TabContent, Button, TextInput, Column, Grid, Row} from "carbon-components-svelte";
     import { ipfs, orbitDB, dbMyDal, contacts, selectedRowIds, selectedTab } from "../stores.js"
     import { initIPFS, initOrbitDB } from "../init.js"
     import { loadContact, generateQRForAddress } from "../operations.js";
     import ContactTable from "$lib/components/ContactTable.svelte";
     import ContactForm from "$lib/components/ContactForm.svelte";
-    import {Tabs, Tab, TabContent, Button, TextInput, Column, Grid, Row} from "carbon-components-svelte";
     import Settings from "$lib/components/Settings.svelte";
 
     let scannedAddress
@@ -137,7 +137,11 @@
     h2 {
         margin: 1rem;
     }
-    .tabs {
+    :global(.bx--btn, input) {
+        margin-bottom: 1rem;
+        margin-top: 1rem;
+    }
+    :global(.tabs) {
         margin: 1rem;
     }
 </style>

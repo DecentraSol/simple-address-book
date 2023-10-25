@@ -66,32 +66,22 @@
 -->
 <Grid>
     <Row>
-        <Column sm={1}>DB name:</Column>
-        <Column sm={3}><TextInput disabled size="sm" bind:value={nameOfDb} /></Column>
+        <Column sm={3}><TextInput labelText="DB name" dsize="sm" isabled size="sm" bind:value={nameOfDb} /></Column>
     </Row>
     <Row>
-        <Column sm={1}>Current DB-Address:</Column>
-        <Column sm={2}><TextInput size="sm" bind:value={dbNameOrAddress} /></Column>
+        <Column sm={2}><TextInput labelText="Current DB-Address" size="sm" bind:value={dbNameOrAddress} /></Column>
         <Column sm={1}><Button size="sm" on:click={changeAddress}>Load</Button></Column>
     </Row>
     <Row>
-        <Column sm={1}>My Identity:</Column>
-        <Column sm={3}><TextInput disabled size="sm" bind:value={myId} /></Column>
+        <Column sm={3}><TextInput labelText="My Identity" disabled size="sm" bind:value={myId} /></Column>
     </Row>
     <Row>
-        <Column sm={1}>Access:</Column>
-        <Column sm={3}><TextInput disabled size="sm" bind:value={accessWrite    } /></Column>
+        <Column sm={3}><TextInput labelText="Access" disabled size="sm" bind:value={accessWrite} /></Column>
     </Row>
     <Row>
-        <Column sm={1}>Dals published:</Column>
-        <Column sm={3}><TextInput disabled size="sm" bind:value={$dals.length} /></Column>
+        <Column sm={3}><TextInput labelText="IPFS peers" disabled size="sm" bind:value={peers} /></Column>
     </Row>
     <Row>
-        <Column sm={1}>IPFS peers:</Column>
-        <Column sm={3}>{peers}</Column>
-    </Row>
-    <Row>
-        <Column sm={1}>Drop DB:</Column>
         <Column sm={3}><Button size="sm" on:click={()=>{
             $orbitDB.drop()
             notify("Db dropped!")
