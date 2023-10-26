@@ -9,8 +9,9 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json --watch",
 		"cypress:open": "cypress open",
-		"cy:alice": "cypress run --config-file cypress/cy-alice.config.js",
-		"cy:bob": "cypress run --config-file cypress/cy-bob.config.js",
+		"cy:alice": "cypress --config-file cypress/cy-alice.config.js",
+		"cy:bob": "cypress --config-file cypress/cy-bob.config.js",
+		"cy:parallel": "cypress-parallel -s cy:bob -t 2",
 		"chat": "concurrently npm:cy:alice npm:cy:bob",
 		"lint": "prettier --plugin-search-dir . --check . && eslint .",
 		"format": "prettier --plugin-search-dir . --write ."
@@ -29,7 +30,7 @@
 		"svelte": "^3.54.0",
 		"svelte-check": "^3.0.1",
 		"typescript": "^5.0.0",
-		"vite": "^4.3.0",
+		"vite": "^4.3.0"
 	},
 	"type": "module",
 	"dependencies": {

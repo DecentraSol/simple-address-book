@@ -10,9 +10,14 @@ Scan and subscribe to other's contact data. (TODO)
 Data arent't processed on our or other's servers and directly transmitted between browser or mobile peers.
 P2P-Connection is established via the IFPS-network.
 
+## Testing 
+1. clone this repo and ```npm install```
+2. run cypress test for alice in one terminal ```npm run cy:alice```
+3. run cypress test for bob in another terminal ```npm run cy:bob```
+
 ## TODO
 - [x] main db should be only writable by identity of ipfs / orbitdb node
-- [ ] write cypress/playwright test with two browsers (alice & bob)
+- [ ] write cypress test with two browsers (alice & bob)
 - [ ] shared db's should also be only writable ipfs id
 - [ ] improve jsdoc
 - [ ] delete contact & drop db should have a confirmation dialog
