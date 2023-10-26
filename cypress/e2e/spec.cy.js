@@ -15,6 +15,15 @@ describe('template spec', () => {
       cy.get('[data-cy=chkMyOwn] > input').check({force: true})
       cy.get('[data-cy=addContact]').click()
       cy.get('table > tbody > tr > td').contains('Alice')
-    // })
+
+      //Scenario 1)
+      //1. now generate the QR-Code and copy the dbUrl
+      //Bob: give the url to another browser automation tool (e.g. Puppeteer) which needs to be initialized the same way
+      ///load import the database - compare data
+      //Alice: change the Street, ZipCode, City, Country
+      //Bob: checks if address changed.
+
+
+
   })
 })
