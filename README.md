@@ -1,3 +1,5 @@
+[![.github/workflows/chat.yml](https://github.com/silkroadnomad/decentralized-address-book/actions/workflows/chat.yml/badge.svg?branch=main)](https://github.com/silkroadnomad/decentralized-address-book/actions/workflows/chat.yml)
+
 # A decentralized address book with OrbitDB and Svelte
 
 Enter your own address and store it locally in your browser storage.
