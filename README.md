@@ -1,4 +1,4 @@
-[![GitHub Actions Demo](https://github.com/silkroadnomad/decentralized-address-book/actions/workflows/main.yml/badge.svg)](https://github.com/silkroadnomad/decentralized-address-book/actions/workflows/main.yml)
+[![GitHub Actions - two browser chat](https://github.com/silkroadnomad/decentralized-address-book/actions/workflows/main.yml/badge.svg)](https://github.com/silkroadnomad/decentralized-address-book/actions/workflows/main.yml)
 ![Vercel](https://therealsujitk-vercel-badge.vercel.app/?app=decentralized-address-book)
 # A decentralized address book with OrbitDB and Svelte
 
