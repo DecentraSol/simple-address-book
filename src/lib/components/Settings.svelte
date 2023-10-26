@@ -8,7 +8,7 @@
     let nameOfDb;
     let myId;
     let found;
-    let accessWrite;
+    // let accessWrite;
     let peers;
     function mapToSting(map){
         let obj = ""
@@ -22,7 +22,7 @@
             myId = $orbitDB?.identity?.id
             nameOfDb = $orbitDB.name
             found = true
-            accessWrite= $orbitDB.access.write
+            // accessWrite= $orbitDB.access.write
             peers = mapToSting($ipfs.libp2p.pubsub.peers)
         }
     }
@@ -71,9 +71,9 @@
     <Row>
         <Column sm={3}><TextInput labelText="My Identity" readonly size="sm" bind:value={myId} /></Column>
     </Row>
-    <Row>
-        <Column sm={3}><TextInput labelText="Access" readonly size="sm" bind:value={accessWrite} /></Column>
-    </Row>
+<!--    <Row>-->
+<!--        <Column sm={3}><TextInput labelText="Access" readonly size="sm" bind:value={accessWrite} /></Column>-->
+<!--    </Row>-->
     <Row>
         <Column sm={3}><TextInput labelText="IPFS peers" readonly size="sm" bind:value={peers} /></Column>
     </Row>
