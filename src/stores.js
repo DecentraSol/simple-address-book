@@ -1,5 +1,6 @@
 import { writable } from 'svelte/store'
 
+export const dbUrl = writable('decab')
 //orbitdb
 export const ipfs = writable()
 export const orbitDB = writable()

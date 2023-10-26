@@ -78,7 +78,7 @@
         <Column sm={3}><TextInput labelText="IPFS peers" readonly size="sm" bind:value={peers} /></Column>
     </Row>
     <Row>
-        <Column sm={3}><Button size="sm" on:click={()=>{
+        <Column sm={3}><Button data-cy="dropDB" size="sm" on:click={()=>{
             $orbitDB.drop()
             $dbMyDal.drop()
             notify("Db dropped!")

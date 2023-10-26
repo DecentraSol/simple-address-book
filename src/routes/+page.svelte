@@ -1,7 +1,7 @@
 <script>
     import { onMount } from "svelte";
     import {Tabs, Tab, TabContent, Button, TextInput, Column, Grid, Row} from "carbon-components-svelte";
-    import { ipfs, orbitDB, dbMyDal, contacts, selectedRowIds, selectedTab } from "../stores.js"
+    import {ipfs, orbitDB, dbMyDal, contacts, selectedRowIds, selectedTab, dbUrl} from "../stores.js"
     import { initIPFS, initOrbitDB } from "../init.js"
     import { loadContact, generateQRForAddress } from "../operations.js";
     import ContactTable from "$lib/components/ContactTable.svelte";
@@ -45,7 +45,7 @@
         // $ipfs.libp2p.on('peer:connect', peerInfo => console.log("peerInfo",peerInfo))
         // $ipfs.libp2p.on('peer:disconnect', peerInfo => console.log("peerInfo",peerInfo))
 
-        const _orbitDB = await initOrbitDB($ipfs)
+        const _orbitDB = await initOrbitDB($ipfs,$dbUrl) //initialize dbname from url
         if (!$orbitDB) $orbitDB = _orbitDB;
 
         localStorage.setItem("dbName",$orbitDB.address) //don't do this inside initOrbitDB since there we initialize DALs !
@@ -133,9 +133,9 @@
 -->
 <h2>Decentralized Addressbook of {$orbitDB?.name}</h2>
 <Tabs class="tabs" bind:selected={$selectedTab}>
-    <Tab label="Contacts" />
-    <Tab label="My Address" />
-    <Tab label="Settings" />
+    <Tab label="Contacts" data-cy="contacts"/>
+    <Tab label="My Address" data-cy="address"/>
+    <Tab label="Settings"  data-cy="settings"/>
     <svelte:fragment slot="content">
         <TabContent>
             <Grid fullWidth>
