@@ -20,7 +20,7 @@ jobs:
         uses: cypress-io/github-action@v5
         with:
           start: npm run dev
-          wait-on: 'http://localhost:5173'
+          wait-on: 'http://[::1]:5173'
       - name: Run 2 Cypresses
         uses: cypress-io/github-action@v5
         with:
