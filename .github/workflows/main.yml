@@ -1,5 +1,5 @@
 name: GitHub Actions Demo
-run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+run-name: ${{ github.actor }} is testing peer-to-peer between two browserss 🚀
 on: [push]
 jobs:
   Explore-GitHub-Actions:
@@ -19,7 +19,7 @@ jobs:
       - name: Run tests
         uses: cypress-io/github-action@v2
         with:
-          start: npm start
+          start: npm run dev
           wait-on: 'http://localhost:5173'
       - name: Run 2 Cypresses
         uses: cypress-io/github-action@v2
