@@ -1,10 +1,10 @@
-- name: Check out code 🛎
+- name: Check out code
   uses: actions/checkout@v2
 
 # install dependencies, start the app,
 # and run E2E tests using Cypress GitHub action
 # https://github.com/cypress-io/github-action
-- name: Run tests 🧪
+- name: Run tests
   uses: cypress-io/github-action@v2
   with:
     start: npm start
@@ -12,7 +12,7 @@
 
 # run two Cypress instances at the same time
 # so they truly chat with each other
-- name: Run 2 Cypresses 🧪
+- name: Run 2 Cypresses
   uses: cypress-io/github-action@v2
   with:
     # we already have installed everything
