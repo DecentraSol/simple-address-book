@@ -17,12 +17,12 @@ jobs:
           ls ${{ github.workspace }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
       - name: Run tests
-        uses: cypress-io/github-action@v5
+        uses: cypress-io/github-action@v6
         with:
           start: npm run dev
           wait-on: 'http://[::1]:5173'
       - name: Run 2 Cypresses
-        uses: cypress-io/github-action@v5
+        uses: cypress-io/github-action@v6
         with:
           # we already have installed everything
           install: false
