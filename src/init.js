@@ -15,20 +15,11 @@ export async function initOrbitDB(ipfsInstance,dbName) {
     console.log("initializing dbName",dbName)
 
     const OrbitDBModul = await import('./modules/orbitdb-core/index.js');
-    // const createOrbitDB = OrbitDBModul.createOrbitDB;
+
     const Identities = OrbitDBModul.Identities
     const Documents = OrbitDBModul.Documents
     const KeyStore = OrbitDBModul.KeyStore
-    // const IPFSAccessController = OrbitDBModul.IPFSAccessController;
-    // const OrbitDBAccessController = OrbitDBModul.OrbitDBAccessController;
-    // const orbitdb = await createOrbitDB({ ipfs  : ipfsInstance });
 
-    // const writePermission = ['*'] //[orbitdb.identity.id] // //['*']
-    // const db = await orbitdb.open(
-    //         dbName, {
-    //             Database: Documents({ indexBy: 'id'} ) ,
-    //        AccessController: OrbitDBAccessController({admin: writePermission, write: writePermission})
-    //     })
     const keysPath = './testkeys'
     const keystore = await KeyStore({ path: keysPath })
     const identities = await Identities({ keystore })
@@ -51,8 +42,8 @@ export async function initOrbitDB(ipfsInstance,dbName) {
         access: accessController,
         directory: './orbitdb1' })
 
-    return db
-}
+        return db
+    }
 
 export async function dropDB(orbitDB){
     await orbitDB.drop()

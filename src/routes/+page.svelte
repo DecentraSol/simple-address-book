@@ -66,20 +66,18 @@
         console.log("initialized myDal",$dbMyDal.address)
         console.log("dbMyDal ",$dbMyDal)
         console.log("dbMyDal-myRecords",myRecords)
-        $orbitDB.events.on('join',async () => {
-            console.log("connected orbit")
-            // Query
-
-            for await (const record of $orbitDB.iterator()) {
-                console.log("orbitDB-record",record)
-            }
-        })
-        $dbMyDal.events.on('join', async () => {
-            console.log("connected mydal")
-            for await (const record of $dbMyDal.iterator()) {
-                console.log("dbMyDal-record",record)
-            }
-        })
+        // $orbitDB.events.on('join',async () => {
+        //     console.log("connected orbit")
+        //     for await (const record of $orbitDB.iterator()) {
+        //         console.log("orbitDB-record",record)
+        //     }
+        // })
+        // $dbMyDal.events.on('join', async () => {
+        //     console.log("connected mydal")
+        //     for await (const record of $dbMyDal.iterator()) {
+        //         console.log("dbMyDal-record",record)
+        //     }
+        // })
 
         $dbMyDal.events.on("update", async (entry) => {
             console.log(entry) //it is not necessary to add this to the contacts because it is allready insdie
@@ -87,8 +85,10 @@
             if(dbAll.length>0) {
                 console.log("$dbMyDal",$dbMyDal)
                 console.log("dbAll",dbAll)
-                $contacts.push(dbAll[0].value) //TODO this leeds to duplicate keys - only add whatis not in yet
-                $contacts = $contacts
+
+                const contactsWithoutIncoming = $contacts.filter(c => c.id!==dbAll[0].value.id)
+                contactsWithoutIncoming.push(dbAll[0].value)
+                $contacts = contactsWithoutIncoming
             }
         })
 
@@ -107,17 +107,14 @@
         const importDB = await initOrbitDB($ipfs, scannedAddress)
         console.log("importing scanned DAL", importDB.address)
         const recordsToImport = await importDB.all()
-        await importDB.sync.start()
-        const peers = importDB.sync.peers
-        console.log("peers",peers)
-        // importDB.sync.events.on( x => console.log("x"+x))
 
         console.log("importDB.name",importDB.name)
         console.log("importDB",importDB)
         console.log("importDB",importDB.events)
         for await (const record of importDB.iterator()) {
-            console.log("orbitDB-record",record)
+            console.log("importDB-record",record)
         }
+        console.log("recordsToImport",recordsToImport)
         for (const recordsToImportKey in recordsToImport) {
             const key = recordsToImport[recordsToImportKey].key
             const value = recordsToImport[recordsToImportKey].value
