@@ -1,6 +1,6 @@
 {
 	"name": "decad",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"private": true,
 	"scripts": {
 		"dev": "vite dev",
@@ -12,13 +12,10 @@
 		"cy:alice": "cypress run --config-file cypress/cy-alice.config.js",
 		"cy:bob": "cypress run --config-file cypress/cy-bob.config.js",
 		"chat": "concurrently npm:cy:alice npm:cy:bob",
-		"test": "playwright test",
-		"test:unit": "vitest",
 		"lint": "prettier --plugin-search-dir . --check . && eslint .",
 		"format": "prettier --plugin-search-dir . --write ."
 	},
 	"devDependencies": {
-		"@playwright/test": "^1.28.1",
 		"@sveltejs/adapter-auto": "^2.0.0",
 		"@sveltejs/kit": "^1.5.0",
 		"carbon-components-svelte": "^0.81.0",
@@ -33,7 +30,6 @@
 		"svelte-check": "^3.0.1",
 		"typescript": "^5.0.0",
 		"vite": "^4.3.0",
-		"vitest": "^0.25.3"
 	},
 	"type": "module",
 	"dependencies": {
