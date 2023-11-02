@@ -10,41 +10,46 @@
 
     let scannedAddress
 
+    let multiAddrs = []
     onMount(async () => {
         const config1 = {
-                    Addresses: {
-                        Swarm: [
-                            '/dns6/ipfs.le-space.de/tcp/9091/wss/p2p-webrtc-star',
-                            '/dns4/ipfs.le-space.de/tcp/9091/wss/p2p-webrtc-star'
-                        ]
-                    },
-                    Bootstrap: [],
-                    Discovery: {
-                        MDNS: {
-                            Enabled: true,
-                            Interval: 0
-                        }
-                    }
+                    // Addresses: {
+                    //     Swarm: [
+                    //         '/dns6/ipfs.le-space.de/tcp/9091/wss/p2p-webrtc-star',
+                    //         '/dns4/ipfs.le-space.de/tcp/9091/wss/p2p-webrtc-star'
+                    //     ]
+                    // },
+                    // Bootstrap: [],
+                    // Discovery: {
+                    //     MDNS: {
+                    //         Enabled: true,
+                    //         Interval: 0
+                    //     }
+                    // }
                 }
 
         if (!$ipfs) $ipfs = await initIPFS({
             config: config1,
             EXPERIMENTAL: { pubsub: true },
+            relay: { enabled: true, hop: { enabled: true } },
             preload: { "enabled": false },
-            repo: './decad01' });
+            repo: './decad02' });
 
         console.log("ipfs.pubsub",$ipfs.libp2p.pubsub)
         window.ipfs = $ipfs
         console.log("ipfs",$ipfs)
-        // const topic = 'fruit-of-the-day'
-        // const receiveMsg = (msg) => console.log(msg.toString())
-        //
-        // await $ipfs.pubsub.subscribe(topic, receiveMsg)
-        // console.log(`subscribed to ${topic}`)
-        //
-        // $ipfs.libp2p.on('peer:connect', peerInfo => console.log("peerInfo",peerInfo))
-        // $ipfs.libp2p.on('peer:disconnect', peerInfo => console.log("peerInfo",peerInfo))
 
+        //NOTE: For pubsub, directly chained pubsub-enabed peers each other
+        $ipfs.libp2p.on('peer:connect', peerInfo => console.log("peer:connect",peerInfo))
+        $ipfs.libp2p.on('peer:disconnect', peerInfo => console.log("peer:disconnect",peerInfo))
+
+        const peers = $ipfs.libp2p.peerStore.peers;
+        console.log('peers', peers);
+        // const peerInfos = await $ipfs.swarm.pubSubPeers()
+        // console.log("swarm.peerInfos",peerInfos)
+        const multiAddrs = await $ipfs.swarm.localAddrs()
+        console.log("multiAddrs",multiAddrs.toString())
+        multiAddrs.push()
         const _orbitDB = await initOrbitDB($ipfs,$dbUrl) //initialize dbname from url
         if (!$orbitDB) $orbitDB = _orbitDB;
 
@@ -58,7 +63,7 @@
             return newElement
         });
 
-        $dbMyDal  = await initOrbitDB($ipfs,$orbitDB.address+"/mydal")
+        $dbMyDal  = await initOrbitDB($ipfs,$orbitDB.address+"/dal")
         const myRecords = await $dbMyDal.all() //TODO add tem to $contacts
         myRecords.map(a => $contacts.push(a.value));
         $contacts = $contacts

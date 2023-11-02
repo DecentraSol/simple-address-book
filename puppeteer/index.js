@@ -1,18 +1,14 @@
 import puppeteer from 'puppeteer';
 
+/**
+ * PuDocumentation: https://pptr.dev/
+ * Calling puppeteer from Cypress: https://github.com/cypress-io/cypress/issues/2427
+ */
 (async () => {
-    // Launch the browser and open a new blank page
     const browser = await puppeteer.launch({headless: false});
     const page = await browser.newPage();
-
-    // Navigate the page to a URL
-    await page.goto('http://localhost:5173/');
-
-    // Set screen size
+    await page.goto('http://localhost:5173/?db=bob');
     await page.setViewport({width: 1080, height: 1024});
-    // await page.waitForSelector('[data-cy=settings]');
-
-    // Query for an element handle.
     const settings = await page.waitForSelector('[data-cy=settings]');
     await settings.click();
     const myAddress = await page.waitForSelector('[data-cy=address]');
@@ -23,9 +19,14 @@ import puppeteer from 'puppeteer';
     await page.locator('[data-cy=txtZipCode]').fill('NY 10007-3001')
     await page.locator('[data-cy=txtCity]').fill('New York')
     await page.locator('[data-cy=txtCountry]').fill('USA')
-    await page.locator('[data-cy=chkMyOwn] > input').click()
-    await page.locator('[data-cy=addContact]').click()
-    await page.locator('table > tbody > tr > td').contains('Bob')
+    // await page.locator('input[type="checkbox"]').click()
+    const check = await page.$('[data-cy=chkMyOwn] > input[type="checkbox"]')
+    await check.click()
+    // await page.locator('[data-cy=chkMyOwn] > input[type="checkbox"]').click()
+    // await page.$eval('input[type="checkbox"]', check => check.checked = true);
+    const addButton = await page.locator('[data-cy=addContact]')
+    addButton.click()
+    // await page.locator('table > tbody > tr > td').contains('Bob')
 
     // Type into search box
     // await page.type('.search-box__input', 'automate beyond recorder');

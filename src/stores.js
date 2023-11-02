@@ -3,6 +3,7 @@ import { writable } from 'svelte/store'
 export const dbUrl = writable('decab')
 //orbitdb
 export const ipfs = writable()
+
 export const orbitDB = writable()
 export const dbMyDal = writable()
 export const contacts = writable([])

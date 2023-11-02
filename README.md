@@ -7,7 +7,7 @@ Enter your own address and store it locally in your browser storage.
 Publish your contact data via qr-code without an app server or cloud.
 Scan and subscribe to other's contact data. (TODO)
 
-Data arent't processed on our or other's servers and directly transmitted between browser or mobile peers.
+Data arent't processed on our or other's servers and directly transmitted between browser or mobile pubSubPeers.
 P2P-Connection is established via the IFPS-network.
 
 ## Testing 
@@ -37,3 +37,6 @@ P2P-Connection is established via the IFPS-network.
 - [ ] decentralized pinning concept via mobiles with signaling features
   - [ ] mobile devices should be able to pin others db's and get paid for it
   - [ ] mobile devices should play as signaling server by offering there WebRTC signaling data on a blockchain (and get paid for it by others)
+
+# Resources 
+- Debugging js-ipfs and js-libp2p Like a Pro - Alex Potsides https://www.youtube.com/watch?v=sHHJAVVFYAA&t=247s

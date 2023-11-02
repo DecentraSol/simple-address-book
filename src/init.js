@@ -38,7 +38,7 @@ export async function initOrbitDB(ipfsInstance,dbName) {
         ipfs: ipfsInstance,
         identity: testIdentity1,
         name: dbName,
-        address: dbName,
+        // address: dbName,
         access: accessController,
         directory: './orbitdb1' })
 
