@@ -36,6 +36,13 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@helia/ipns": "^2.0.3",
+		"@libp2p/kad-dht": "^10.0.11",
+		"@libp2p/peer-id-factory": "^3.0.6",
+		"buffer": "^6.0.3",
+		"datastore-core": "^9.2.3",
+		"ipns": "^7.0.1",
+		"libp2p-crypto": "^0.21.2",
 		"qrcode-generator": "^1.4.4"
 	}
 }

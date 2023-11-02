@@ -1,142 +1,92 @@
 <script>
     import { onMount } from "svelte";
     import {Tabs, Tab, TabContent, Button, TextInput, Column, Grid, Row} from "carbon-components-svelte";
-    import {ipfs, orbitDB, dbMyDal, contacts, selectedRowIds, selectedTab, dbUrl} from "../stores.js"
-    import { initIPFS, initOrbitDB } from "../init.js"
-    import { loadContact, generateQRForAddress } from "../operations.js";
+    import { selectedTab} from "../stores.js"
+    import { Buffer } from 'buffer'
+    globalThis.Buffer = Buffer
+    import { Record } from '@libp2p/kad-dht'
+    import {createEd25519PeerId, createFromPrivKey, createFromPubKey} from '@libp2p/peer-id-factory'
+    import { MemoryDatastore } from 'datastore-core'
+
+    import { CID } from 'multiformats/cid'
+    import {keys} from 'libp2p-crypto';
+
+    import {ipns} from "@helia/ipns"
     import ContactTable from "$lib/components/ContactTable.svelte";
     import ContactForm from "$lib/components/ContactForm.svelte";
     import Settings from "$lib/components/Settings.svelte";
 
-    let scannedAddress
+    let name //IPNS
+    let datastore
 
-    let multiAddrs = []
+
+    /**
+     * Publishes and Resolves cid with a given private key. If no private key is given generate new keys peerId
+     * @param {CID} cid
+     * @param privateKeyHex
+     * @returns {Promise<CID>} a Promise with CID
+     */
+    const publishAndResolveFromIPNS = async (cid, privateKeyHex) => {
+        datastore = new MemoryDatastore()
+        name = ipns({ datastore })
+        let key;
+        if(privateKeyHex){
+            let data = Buffer.from(privateKeyHex, "base64")
+            let _key = await keys.unmarshalPrivateKey(data);
+            key = await createFromPrivKey(_key)
+        }
+        else key = await createEd25519PeerId()
+
+        await name.publish(key, cid)
+
+        const resolvedValue = await name.resolve(key)
+
+        //
+        // console.log("resolvedValue",resolvedValue.toString())
+        // console.log("(cid.toV1() :",cid.toV1().toString())
+        return resolvedValue;
+    }
+
+
     onMount(async () => {
-        const config1 = {
-                    // Addresses: {
-                    //     Swarm: [
-                    //         '/dns6/ipfs.le-space.de/tcp/9091/wss/p2p-webrtc-star',
-                    //         '/dns4/ipfs.le-space.de/tcp/9091/wss/p2p-webrtc-star'
-                    //     ]
-                    // },
-                    // Bootstrap: [],
-                    // Discovery: {
-                    //     MDNS: {
-                    //         Enabled: true,
-                    //         Interval: 0
-                    //     }
-                    // }
-                }
-
-        if (!$ipfs) $ipfs = await initIPFS({
-            config: config1,
-            EXPERIMENTAL: { pubsub: true },
-            relay: { enabled: true, hop: { enabled: true } },
-            preload: { "enabled": false },
-            repo: './decad02' });
-
-        console.log("ipfs.pubsub",$ipfs.libp2p.pubsub)
-        window.ipfs = $ipfs
-        console.log("ipfs",$ipfs)
-
-        //NOTE: For pubsub, directly chained pubsub-enabed peers each other
-        $ipfs.libp2p.on('peer:connect', peerInfo => console.log("peer:connect",peerInfo))
-        $ipfs.libp2p.on('peer:disconnect', peerInfo => console.log("peer:disconnect",peerInfo))
-
-        const peers = $ipfs.libp2p.peerStore.peers;
-        console.log('peers', peers);
-        // const peerInfos = await $ipfs.swarm.pubSubPeers()
-        // console.log("swarm.peerInfos",peerInfos)
-        const multiAddrs = await $ipfs.swarm.localAddrs()
-        console.log("multiAddrs",multiAddrs.toString())
-        multiAddrs.push()
-        const _orbitDB = await initOrbitDB($ipfs,$dbUrl) //initialize dbname from url
-        if (!$orbitDB) $orbitDB = _orbitDB;
-
-        localStorage.setItem("dbName",$orbitDB.address) //don't do this inside initOrbitDB since there we initialize DALs !
-        console.log("orbitdb is",$orbitDB)
-        window.orbitdb = $orbitDB
-
-        const dbAll = await $orbitDB.all()
-        $contacts = dbAll.map(a => {
-            const newElement = a.value
-            return newElement
-        });
-
-        $dbMyDal  = await initOrbitDB($ipfs,$orbitDB.address+"/dal")
-        const myRecords = await $dbMyDal.all() //TODO add tem to $contacts
-        myRecords.map(a => $contacts.push(a.value));
-        $contacts = $contacts
-
-        console.log("initialized myDal",$dbMyDal.address)
-        console.log("dbMyDal ",$dbMyDal)
-        console.log("dbMyDal-myRecords",myRecords)
-        // $orbitDB.events.on('join',async () => {
-        //     console.log("connected orbit")
-        //     for await (const record of $orbitDB.iterator()) {
-        //         console.log("orbitDB-record",record)
-        //     }
-        // })
-        // $dbMyDal.events.on('join', async () => {
-        //     console.log("connected mydal")
-        //     for await (const record of $dbMyDal.iterator()) {
-        //         console.log("dbMyDal-record",record)
-        //     }
-        // })
-
-        $dbMyDal.events.on("update", async (entry) => {
-            console.log(entry) //it is not necessary to add this to the contacts because it is allready insdie
-            const dbAll = await $dbMyDal.all()
-            if(dbAll.length>0) {
-                console.log("$dbMyDal",$dbMyDal)
-                console.log("dbAll",dbAll)
-
-                const contactsWithoutIncoming = $contacts.filter(c => c.id!==dbAll[0].value.id)
-                contactsWithoutIncoming.push(dbAll[0].value)
-                $contacts = contactsWithoutIncoming
-            }
-        })
-
-        $orbitDB.events.on("update", async (entry) => {
-            console.log(entry) //it is not necessary to add this to the contacts because it is allready insdie
-            $contacts = await  $orbitDB.all() //TODO this overwrites everything - only add what is not in yet
-        })
-
-        console.log("$contacts",$contacts)
+        window.global = window;
+        const privateKeyHex = "CAESQPuTnfPuM1wifWUjCfvxix9G39vxTlnWpbH9lycN8WsMz5jq5y27dsyesoigKfbpqjBtaEBlCN++NBPAz+W8rsQ="
+        const cid = CID.parse('QmVpU3CNMKLq19AfBTL5eyAwoAVenb5V2i8CEoCpBtnr88')
+        const resolvedValue = await publishAndResolveFromIPNS(cid,privateKeyHex)
+        console.log("resolvedValue",resolvedValue.toString())
     });
 
-    $: loadContact($selectedRowIds[0]) //loads the selected contact into the contact form
-
+    let scannedAddress
     const importDAL = async () => {
 
-        const importDB = await initOrbitDB($ipfs, scannedAddress)
-        console.log("importing scanned DAL", importDB.address)
-        const recordsToImport = await importDB.all()
-
-        console.log("importDB.name",importDB.name)
-        console.log("importDB",importDB)
-        console.log("importDB",importDB.events)
-        for await (const record of importDB.iterator()) {
-            console.log("importDB-record",record)
-        }
-        console.log("recordsToImport",recordsToImport)
-        for (const recordsToImportKey in recordsToImport) {
-            const key = recordsToImport[recordsToImportKey].key
-            const value = recordsToImport[recordsToImportKey].value
-            delete value.own
-            value.orbitDB=scannedAddress
-            value.updated=new Date()
-            $contacts.push(value)
-        }
-        $contacts = $contacts
-        console.log("$contacts",$contacts)
+        // const importDB = await initOrbitDB($ipfs, scannedAddress)
+        // console.log("importing scanned DAL", importDB.address)
+        // const recordsToImport = await importDB.all()
+        //
+        // console.log("importDB.name",importDB.name)
+        // console.log("importDB",importDB)
+        // console.log("importDB",importDB.events)
+        // for await (const record of importDB.iterator()) {
+        //     console.log("importDB-record",record)
+        // }
+        // console.log("recordsToImport",recordsToImport)
+        // for (const recordsToImportKey in recordsToImport) {
+        //     const key = recordsToImport[recordsToImportKey].key
+        //     const value = recordsToImport[recordsToImportKey].value
+        //     delete value.own
+        //     value.orbitDB=scannedAddress
+        //     value.updated=new Date()
+        //     $contacts.push(value)
+        // }
+        // $contacts = $contacts
+        // console.log("$contacts",$contacts)
     }
 
 </script>
 <!--
 @component AddressBook
 -->
-<h2>Decentralized Addressbook of {$orbitDB?.name}</h2>
+<h2>Decentralized Addressbook</h2>
 <Tabs class="tabs" bind:selected={$selectedTab}>
     <Tab label="Contacts" data-cy="contacts"/>
     <Tab label="My Address" data-cy="address"/>
@@ -147,7 +97,10 @@
                 <Row>
                     <Column><TextInput size="sm" bind:value={scannedAddress}/></Column>
                     <Column><Button size="sm" on:click={() => importDAL()}>Scan Contact</Button></Column>
-                    <Column><Button size="sm" on:click={() => generateQRForAddress($dbMyDal.address)}>My QR-Code</Button></Column>
+                    <Column><Button size="sm" on:click={() => {
+                    //generateQRForAddress($dbMyDal.address)
+                    }
+                    }>My QR-Code</Button></Column>
                 </Row>
             </Grid>
             <ContactTable/>
