@@ -3,10 +3,11 @@ import { writable } from 'svelte/store'
 export const dbUrl = writable('decab')
 //orbitdb
 export const ipfs = writable()
+export const remotePinner = writable()
 
-export const orbitDB = writable()
+export const myAddressBook = writable([])
 export const dbMyDal = writable()
-export const contacts = writable([])
+// export const contacts = writable([])
 
 export const showNotification =  writable()
 export const notificationMessage = writable()
@@ -15,13 +16,17 @@ export const qrCodeData = writable()
 
 export const selectedRowIds = writable([])
 export const selectedTab = writable(0)
-export const selectedAddress = writable( {
-    firstname: "",
-    lastname: "",
+const contact = {
+    id:"",
+    firstName: "",
+    lastName: "",
     street: "",
-    zipcode: "",
+    postalCode: "",
     city: "",
-    country: "",
+    stateProvince: "",
+    countryRegion:"",
     own: false,
-    orbitDbAddress: ""
-})
+    ipns: ""
+}
+export const selectedAddr = writable( contact)
+// export const selectedAddress = writable( )
