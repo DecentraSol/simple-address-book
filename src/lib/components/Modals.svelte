@@ -4,7 +4,7 @@
     import {createEventDispatcher} from "svelte";
     const dispatch = createEventDispatcher();
     import { clickToCopy } from "../../utils.js"
-    import { dbMyDal } from "../../stores.js"
+    import { myDal } from "../../stores.js"
 
     /**
      * @type {boolean}
@@ -21,7 +21,7 @@
     /**
      * myDal
      */
-    // export let dbMyDal;
+    // export let myDal;
 
     let myContactData = []
     /**
@@ -46,7 +46,7 @@
         // myContactData = dbAll[0]
         console.log("myContactData",myContactData)
     }
-    $: getMyData($dbMyDal)
+    $: getMyData($myDal)
 
 
     let text = '';
