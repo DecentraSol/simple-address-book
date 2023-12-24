@@ -36,7 +36,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-
+		"@waku/sdk": "^0.0.21",
 		"qrcode-generator": "^1.4.4",
 		"vcards-js": "^2.10.0"
 	}
