@@ -15,7 +15,7 @@
     };
 </script>
 
-<h2>Decentralized Addressbook of {$identity}</h2>
+<h2>Decentralized Address Book of {$identity}</h2>
 <Tabs class="tabs" bind:selected={$selectedTab}>
     <Tab label="Contacts" data-cy="contacts"/>
     <Tab label="My Address" data-cy="address"/>
