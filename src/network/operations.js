@@ -17,7 +17,7 @@ export async function handleMount() {
     await _wakuNode.start();
     console.log("wakunode started")
     await waitForRemotePeer(_wakuNode, [Protocols.LightPush]);
-    console.log("peers connected...",_wakuNode.libp2p)
+    console.log("waku libp2p peers connected...",_wakuNode.libp2p)
     _wakuNode.libp2p.addEventListener('connection:open',  () => {
         connectedPeers.update(n => n + 1);
     });
