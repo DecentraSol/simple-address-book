@@ -3,7 +3,7 @@
     import QRCode from "qrcode-generator";
     import {createEventDispatcher} from "svelte";
     const dispatch = createEventDispatcher();
-    import { clickToCopy } from "../../utils.js"
+    import { clickToCopy } from "../../utils/utils.js"
     import { myDal } from "../../stores.js"
 
     /**

@@ -2,7 +2,12 @@ import { writable } from 'svelte/store'
 
 export const identity = writable(window.localStorage.getItem('identity') || 'unknown')
 export const wakuNode = writable()
-export const myAddressBook = writable([])
+export const subscription = writable()
+export const connectedPeers = writable(0)
+
+
+
+export const myAddressBook = writable(JSON.parse(window.localStorage.getItem('myAddressBook') || "[]"))
 export const myDal = writable()
 
 

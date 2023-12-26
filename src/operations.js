@@ -1,4 +1,4 @@
-import {sha256, notify} from "./utils.js";
+import {sha256, notify} from "./utils/utils.js";
 import vCardsJS from "vcards-js"
 
 import {
@@ -8,7 +8,7 @@ import {
     selectedTab,
     qrCodeData,
     qrCodeOpen,
-    myDal
+    myDal, identity
 } from "./stores.js";
 
 
@@ -53,6 +53,7 @@ qrCodeOpen.subscribe((value) => {
  * @returns {Promise<void>}
  */
 export async function loadContact(id) {
+    console.log("loading")
     if (!myAddressBook || !_myAddressBook) return;
     const address = _myAddressBook.find(obj => obj.id === id) //|| await _myAddressBook.get(hash) || {}
     _selectedAddr = address
@@ -152,6 +153,7 @@ export async function addContact() {
     }
     _myAddressBook.push(_selectedAddr)
     myAddressBook.set(_myAddressBook) //trigger reactivity
+    window.localStorage.setItem('myAddressBook', JSON.stringify(_myAddressBook));
     console.log(_myAddressBook)
     console.log(vCard.getFormattedString());
 
@@ -161,32 +163,22 @@ export async function addContact() {
 }
 
 export async function updateContact() {
-    let deletedHash, updateHash
-    const id = await sha256(JSON.stringify(_selectedAddress));
-    // if(_selectedAddress.own){
-    //     deletedHash = await _dbMyDal.del(_selectedAddress.id);
-    //     updateHash = await _dbMyDal.put(_selectedAddress)
-    // }
-    // else{
-    //     deletedHash = await _myAddressBook.del(_selectedAddress._id);
-    //     updateHash = await _myAddressBook.put(_selectedAddress)
-    // }
-    notify(`Contact added successfully! ${updateHash}`)
-    selectedAddress.set({})
+    console.log("updating contact",_selectedAddr)
+
+
+    const newAddrBook = _myAddressBook.filter( el => el.id !== _selectedAddr.id )
+    newAddrBook.push(_selectedAddr)
+    myAddressBook.set(_myAddressBook)
+    notify(`Contact added successfully! ${_myAddressBook.firstName} ${_myAddressBook.lastName}`)
+    selectedAddr.set({})
     selectedTab.set(0)
-    return {deletedHash,updateHash}
 }
 
 export async function deleteContact() {
-    let deletedHash;
-    if(_selectedAddress.own)
-        deletedHash = await _dbMyDal.del(_selectedAddress.id)
-    else
-        deletedHash = await _myAddressBook.del(_selectedAddress.id)
-    notify(`Contact deleted successfully! ${deletedHash}`)
-    selectedAddress.set({})
+    myAddressBook.set(_myAddressBook.filter( el => el.id !== _selectedAddr.id ))
+    notify(`Contact deleted successfully! ${_selectedAddr.firstName} ${_selectedAddr.lastName}`)
+    selectedAddr.set({})
     selectedTab.set(0)
-    return {deletedHash}
 }
 
 export async function generateQRForAddress(contact) {
