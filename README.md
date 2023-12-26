@@ -14,9 +14,11 @@
 Browser A)
 - under Settings set your name under identity (e.g. Alice)
 - under MyAddress add Alice own address and mark own address
+
 Browser B)
 - under Settings set your name under identity (e.g. Alice)
 - under MyAddress add Bobs own address and mark own address 
+
 Browser A)
 - under Contacts type "Bob" and click on "Scan Address"
 
