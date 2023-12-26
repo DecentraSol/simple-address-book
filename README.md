@@ -12,17 +12,17 @@
 
 ## Usage
 Browser A)
-- under Settings set your name under identity (e.g. Alice)
+- under Settings->identity set for name (e.g. Alice) (this is planed for a DID!)
 - under MyAddress add Alice own address and mark own address
 
 Browser B)
-- under Settings set your name under identity (e.g. Alice)
+- under Settings->identity set for name (e.g. Bob)
 - under MyAddress add Bobs own address and mark own address 
 
 Browser A)
 - under Contacts type "Bob" and click on "Scan Address"
 
-Result: Address of Bob should be added on Alice address book
+Result: Address of Bob should be added automatically on Alice address book
 
 ## Todo
 - Fix adding full address attributes (vcard standard? which standard?)
