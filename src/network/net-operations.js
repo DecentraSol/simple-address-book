@@ -59,7 +59,7 @@ async function handleMessage (wakuMessage) {
     let result
     if (messageObj.recipient === _identity){
         switch (messageObj.command) {
-            case SEND_ADDRESS_REQUEST: //we received a SEND_ADDRESS_REQUEST and sending our address //TODO show requester in modal & verify signature with public key
+            case SEND_ADDRESS_REQUEST: //we received a SEND_ADDRESS_REQUEST and sending our address //TODO verify signature with public key
                 result = await confirm({data:messageObj})
                 if(result){
                     const contact =  _myAddressBook.find((entry) => entry.owner === _identity) //TODO check if requester (Alice) was sending her own data

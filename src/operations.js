@@ -90,10 +90,11 @@ export async function updateContact() {
     myAddressBook.set(newAddrBook)
     notify(`Contact added successfully - informing subscribers! ${_myAddressBook.firstName} ${_myAddressBook.lastName}`)
     console.log("_subscriberList",_subscriberList)
-    for (const s in  _subscriberList) {
-        sendMyAddress(_subscriberList[s],_selectedAddr)
+    if(_selectedAddr.owner === _identity){ //only send update requests if my own address was changed
+        for (const s in  _subscriberList) {
+            sendMyAddress(_subscriberList[s],_selectedAddr)
+        }
     }
-
     selectedAddr.set({})
     selectedTab.set(0)
 }
