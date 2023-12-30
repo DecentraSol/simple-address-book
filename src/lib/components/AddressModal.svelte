@@ -7,7 +7,7 @@
     /* the header of the modal @type {string} [heading='Confirmation'] */
     export let heading = 'Confirmation';
     /* the message to be displayed @type {string}  [message=''Do you want to proceed?']*/
-    export let message = 'Do you want to proceed?';
+    // export let message = 'Do you want to proceed?';
     /* ok button (true) @type {string}  [TrueButtonText='Continue']*/
     export let TrueButtonText = 'Continue';
     /* the cancel button (false) @type {string}  [FalseButtonText='Cancel']*/
@@ -39,10 +39,10 @@ on:click:button--secondary={() => {
 }}
 on:submit={() => dispatch('result', true)}
 >
-        <Grid>
-            <Row><Column>Command: {data.command}</Column></Row>
-            <Row><Column>Recipient: {data.recipient}</Column></Row>
-            <Row><Column>Sender: {data.sender}</Column></Row>
-            <Row><Column>TimeStamp: <Time timestamp={data.timestamp} /> </Column></Row>
-        </Grid>
+<Grid>
+    <Row><Column>Command: {data.command}</Column></Row>
+    <Row><Column>Recipient: {data.recipient}</Column></Row>
+    <Row><Column>Sender: {data.sender}</Column></Row>
+    <Row><Column>TimeStamp: <Time timestamp={data.timestamp} /> </Column></Row>
+</Grid>
 </Modal>

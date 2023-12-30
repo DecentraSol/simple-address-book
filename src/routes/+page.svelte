@@ -5,7 +5,7 @@
     import Settings from "$lib/components/Settings.svelte";
     import { selectedTab, selectedRowIds, qrCodeOpen, qrCodeData, identity, progressState, progressText } from "../stores.js";
     import { loadContact } from "../operations.js";
-    import { sendAddress } from "../network/operations.js"
+    import { sendAddress } from "../network/net-operations.js"
 
     $: loadContact($selectedRowIds[0]);
     let scannedAddress;

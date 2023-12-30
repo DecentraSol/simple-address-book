@@ -1,4 +1,3 @@
-import { AddressCardMessage} from "../schemas/protobufSchemas.js";
 import { createDecoder, createEncoder, createLightNode, Protocols, waitForRemotePeer} from "@waku/sdk";
 import {
     myAddressBook,
@@ -8,11 +7,11 @@ import {
     identity,
     progressText,
     progressState,
-    showModal,
-    modalData
+    subscriberList
 } from "../stores.js";
-import {confirm} from "../lib/components/modal.js"
 
+import { AddressCardMessage} from "../schemas/protobufSchemas.js";
+import {confirm} from "../lib/components/modal.js"
 
 export const CONTENT_TOPIC = "/dContact/1/message/proto"; //TODO each user should have its own TOPIC
 const SEND_ADDRESS_REQUEST = 'SEND_ADDRESS_REQUEST';
@@ -52,6 +51,7 @@ export async function startNetwork() {
         connectedPeers.update(n => n - 1);
     });
 }
+
 async function handleMessage (wakuMessage) {
 
     if (!wakuMessage.proto.payload) return;
@@ -60,35 +60,41 @@ async function handleMessage (wakuMessage) {
     if (messageObj.recipient === _identity){
         switch (messageObj.command) {
             case SEND_ADDRESS_REQUEST: //we received a SEND_ADDRESS_REQUEST and sending our address //TODO show requester in modal & verify signature with public key
-                console.log("received messageObj")
                 result = await confirm({data:messageObj})
-                console.log("result",result)
                 if(result){
-                    const contact =  _myAddressBook.find((entry) => entry.own === true) //TODO check if requester (Alice) was sending her own data
+                    const contact =  _myAddressBook.find((entry) => entry.owner === _identity) //TODO check if requester (Alice) was sending her own data
+
                     sendMyAddress(messageObj.sender,contact);
+
+                    if(_subscriberList.indexOf(messageObj.sender)===-1)
+                        _subscriberList.push(messageObj.sender)
+                    console.log("_subscriberList",_subscriberList)
+                    subscriberList.update(_subscriberList) //keep subscribers
                 }else{
                     //TODO send "rejected sending address"
                 }
-                break;
+            break;
             case RECEIVE_UPDATE_ADDRESS || RECEIVE_UPDATE_ADDRESS: //we received an address and add it to our address book //TODO show address sender in modal & verify signature with his pubic key
                 result = await confirm({data:messageObj})
-                console.log("result",result)
-                updateAddressBook(messageObj);
-                break;
-            default:
-                console.error(`Unknown command: ${messageObj.command}`);
-        }
-    }
-    else { //if the sender cannot know the recipient and is broadcasting to the whole world (e.g. for address updates)
-        switch (messageObj.command) {
-            case RECEIVE_UPDATE_ADDRESS: //we received an address and update it in our address book //TODO show address sender in modal & verify signature with his pubic key
-               // updateAddressBook(messageObj);
-                break;
+                if(result) {
+                    updateAddressBook(messageObj);
+                }
+                else {  //TODO respond with something?
+                     }
+            break;
             default:
                 console.error(`Unknown command: ${messageObj.command}`);
         }
     }
 }
+
+
+/**
+ * In case somebody requests my contact data or I update my address I'll send it to requester / subscriber
+ * @param recipient
+ * @param data
+ * @returns {Promise<void>}
+ */
 export async function sendMyAddress(recipient, data) {
 
     const protoMessage = AddressCardMessage.create({
@@ -120,7 +126,10 @@ export const sendAddress = async (identity,scannedAddress) => {
 function updateAddressBook(messageObj) {
     const msg = messageObj.toJSON()
     const contactData = JSON.parse(messageObj.toJSON().data);
-    _myAddressBook.push({
+    console.log("updating myAddressBook ",_myAddressBook)
+    const newAddrBook = _myAddressBook.filter( el => el.id !== contactData.id )
+    newAddrBook.push({
+        id: contactData.id, //TODO
         firstName: contactData.firstName,
         middleName: contactData.middleName,
         lastName: contactData.lastName,
@@ -139,10 +148,10 @@ function updateAddressBook(messageObj) {
         owner: msg.sender,
         ownerPubKey: 'somepubkey' //TODO store pubkey of owner with contact
     });
-    myAddressBook.set(_myAddressBook);
+    myAddressBook.set(newAddrBook);
 }
 
-let _wakuNode
+let _wakuNode;
 wakuNode.subscribe((val) => {
     _wakuNode = val
 });
@@ -156,13 +165,16 @@ let _identity
 identity.subscribe((val) => {
     _identity = val
 });
-
 let _connectedPeers
 connectedPeers.subscribe((val) => {
     _connectedPeers = val
 });
-
 let _myAddressBook
 myAddressBook.subscribe((val) => {
     _myAddressBook = val
+});
+
+let _subscriberList
+subscriberList.subscribe((val) => {
+    _subscriberList = val
 });

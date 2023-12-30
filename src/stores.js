@@ -7,18 +7,13 @@ export const connectedPeers = writable(0)
 export const progressText = writable("initializing...")
 export const progressState = writable(0)
 
-
-
-
 export const myAddressBook = writable(JSON.parse(window.localStorage.getItem('myAddressBook') || "[]"))
 export const myDal = writable()
-
 
 export const showNotification =  writable()
 export const notificationMessage = writable()
 
-export const showModal = writable(false)
-export const modalData = writable()
+export const subscriberList = writable(JSON.parse(window.localStorage.getItem('subscriberList')) || [] )
 export const qrCodeOpen = writable(false)
 export const qrCodeData = writable()
 

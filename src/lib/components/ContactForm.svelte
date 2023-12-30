@@ -25,9 +25,6 @@
                                 bind:value={$selectedAddr.countryRegion}  /></Column>
         </Row>
         <Row>
-            <Column><Checkbox data-cy="chkMyOwn" labelText="my own" bind:checked={$selectedAddr.own} /></Column>
-        </Row>
-        <Row>
             <Column>
                 {#if $selectedAddr.id}
                     <Button data-cy="updateContact" size="sm" on:click={() => updateContact()}>Update</Button>

@@ -7,8 +7,9 @@ import {
     selectedTab,
     qrCodeData,
     qrCodeOpen,
-    myDal, identity
+    myDal, identity, subscriberList
 } from "./stores.js";
+import {sendMyAddress} from "./network/net-operations.js";
 
 
 let _wakuNode;
@@ -50,6 +51,10 @@ qrCodeOpen.subscribe((value) => {
     _qrCodeOpen = value
 })
 
+let _subscriberList
+subscriberList.subscribe((val) => {
+    _subscriberList = val
+});
 /**
  * Loading a contact from memory into the contactForm
  * @param id
@@ -68,23 +73,27 @@ export async function loadContact(id) {
 
 export async function addContact() {
 
+    _selectedAddr.id = new Date().getTime()+"-"+(Math.random()*100000000)
+    _selectedAddr.owner = _identity
     _myAddressBook.push(_selectedAddr)
     myAddressBook.set(_myAddressBook) //trigger reactivity
-    window.localStorage.setItem('myAddressBook', JSON.stringify(_myAddressBook));
-    console.log(_myAddressBook)
-    console.log(vCard.getFormattedString());
-
     selectedAddr.set({})
     selectedTab.set(0)
-    notify(`Contact added successfully! ${hash}`);
+    notify(`Contact added successfully!`);
 }
 
 export async function updateContact() {
     console.log("updating contact",_selectedAddr)
     const newAddrBook = _myAddressBook.filter( el => el.id !== _selectedAddr.id )
+    _selectedAddr.owner = _identity
     newAddrBook.push(_selectedAddr)
-    myAddressBook.set(_myAddressBook)
+    myAddressBook.set(newAddrBook)
     notify(`Contact added successfully - informing subscribers! ${_myAddressBook.firstName} ${_myAddressBook.lastName}`)
+    console.log("_subscriberList",_subscriberList)
+    for (const s in  _subscriberList) {
+        sendMyAddress(_subscriberList[s],_selectedAddr)
+    }
+
     selectedAddr.set({})
     selectedTab.set(0)
 }
