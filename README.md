@@ -25,17 +25,28 @@ Browser A)
 Result: Address of Bob should be added automatically on Alice address book
 
 ## Todo
+
+Basics
+- if Bob requests Alice address he sends his public key so Alice can encrypt
+  - Before sending request Bob subscribes to Alice TOPIC (TOPIC = Alice pubkey)
+  - Alice collects Bob's pubKey in her subscriber list
+  - Alice sends her pubKey and a signature with her address/contact data to Bob
+  - Bob verifies Alice signature over her contact data
+- if Alice updates her address, she sends an update-address command to each element in her subscriber list 
+  - Bob request address again
+  - test offline behaviour of recipient.
+- encrypt contact data with publicKey of recipient (so others can't sniff contact data)
 - add confirm modal when requesting address from Bob - add checkout "send my own address"
 - add confirm notification on Bob when send-address request arrives - optionally add Address of "Alice"
 - add confirm notification on Alice when deliver-address message arrives to add address
-- if Alice or Bob updates her/his address send an update-address command - test offline behaviour of recipient. 
+
 - test Waku-Feature "ephemeral: messages"
 - store local address book in a local first db (e.g. OrbitDB) so it is replicating with peers with same identity
 - refactor network operations to be used with / create new branch for:
   - Peer-to-peer & Local First
     - LibP2P local first / p2p see p2p-playground
     - Automerge: https://automerge.org/
-    - Plain IPFS
+    - Plain IPFS (store vcard on ipfs / ipns / ipfs.cat every address from time to time)
   - Peer-to-peer & Non Local First 
   - Nostr: https://nostr.com/
 

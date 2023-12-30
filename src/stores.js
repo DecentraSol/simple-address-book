@@ -16,6 +16,9 @@ export const myDal = writable()
 
 export const showNotification =  writable()
 export const notificationMessage = writable()
+
+export const showModal = writable(false)
+export const modalData = writable()
 export const qrCodeOpen = writable(false)
 export const qrCodeData = writable()
 

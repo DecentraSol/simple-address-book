@@ -41,10 +41,7 @@
      */
     async function getMyData(db) {
         if(!db) return
-        console.log("--->",db)
         myContactData = await db.all()
-        // myContactData = dbAll[0]
-        console.log("myContactData",myContactData)
     }
     $: getMyData($myDal)
 

@@ -16,7 +16,7 @@
 </script>
 
 <h2>Decentralized Address Book of {$identity}</h2>
-{#if $progressState!==5}
+{#if $progressState!==6}
     <ProgressBar helperText={"("+$progressState+"/5) "+$progressText} status={$progressState===5?"finished":"active"}/>
 {/if}
 <Tabs class="tabs" bind:selected={$selectedTab}>
