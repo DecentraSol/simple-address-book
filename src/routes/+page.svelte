@@ -1,9 +1,9 @@
 <script>
-    import { Tabs, Tab, TabContent, Button, TextInput, Column, Grid, Row } from "carbon-components-svelte";
+    import {Tabs, Tab, TabContent, Button, TextInput, Column, Grid, Row, ProgressBar} from "carbon-components-svelte";
     import ContactForm from "$lib/components/ContactForm.svelte";
     import ContactList from "$lib/components/ContactList.svelte";
     import Settings from "$lib/components/Settings.svelte";
-    import { selectedTab, selectedRowIds, qrCodeOpen, qrCodeData, identity } from "../stores.js";
+    import { selectedTab, selectedRowIds, qrCodeOpen, qrCodeData, identity, progressState, progressText } from "../stores.js";
     import { loadContact } from "../operations.js";
     import { sendAddress } from "../network/operations.js"
 
@@ -16,6 +16,9 @@
 </script>
 
 <h2>Decentralized Address Book of {$identity}</h2>
+{#if $progressState!==5}
+    <ProgressBar helperText={"("+$progressState+"/5) "+$progressText} status={$progressState===5?"finished":"active"}/>
+{/if}
 <Tabs class="tabs" bind:selected={$selectedTab}>
     <Tab label="Contacts" data-cy="contacts"/>
     <Tab label="My Address" data-cy="address"/>

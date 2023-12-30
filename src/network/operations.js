@@ -1,6 +1,6 @@
-import {AddressCardMessage} from "../schemas/protobufSchemas.js";
-import {createDecoder, createEncoder, createLightNode, Protocols, waitForRemotePeer} from "@waku/sdk";
-import {myAddressBook, wakuNode, subscription,connectedPeers,identity} from "../stores.js";
+import { AddressCardMessage} from "../schemas/protobufSchemas.js";
+import { createDecoder, createEncoder, createLightNode, Protocols, waitForRemotePeer} from "@waku/sdk";
+import { myAddressBook, wakuNode, subscription, connectedPeers, identity, progressText, progressState} from "../stores.js";
 
 export const CONTENT_TOPIC = "/dContact/1/message/proto";
 const COMMAND_SEND_ADDRESS = 'SEND-ADDRESS';
@@ -10,16 +10,21 @@ const decoder = createDecoder(CONTENT_TOPIC);
 const encoder = createEncoder({ contentTopic: CONTENT_TOPIC, ephemeral: true });
 
 export async function handleMount() {
-    console.log("creating light waku node")
+    progressText.set("creating light waku node")
+    progressState.set(1)
     _wakuNode = await createLightNode({ defaultBootstrap: true })
     wakuNode.set(_wakuNode)
-    console.log("starting ...")
+    progressText.set("starting waku node ...")
+    progressState.set(2)
     await _wakuNode.start();
-    console.log("wakunode started")
+    progressText.set("waku started - waiting for remote peers")
+    progressState.set(3)
     await waitForRemotePeer(_wakuNode, [Protocols.LightPush]);
-    console.log("waku libp2p peers connected...",_wakuNode.libp2p)
+    progressText.set("waku libp2p peers connected..")
+    progressState.set(4)
     _wakuNode.libp2p.addEventListener('connection:open',  () => {
         connectedPeers.update(n => n + 1);
+        if(_connectedPeers>1) progressState.set(5)
     });
     _wakuNode.libp2p.addEventListener('connection:close', () => {
         connectedPeers.update(n => n - 1);

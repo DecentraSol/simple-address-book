@@ -45,3 +45,4 @@ Result: Address of Bob should be added automatically on Alice address book
 
 ## Done
 - 30.12.2023 fix adding full address attributes
+- 30.12.2023 adding progressbar with state 

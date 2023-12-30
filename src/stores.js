@@ -4,6 +4,9 @@ export const identity = writable(window.localStorage.getItem('identity') || 'unk
 export const wakuNode = writable()
 export const subscription = writable()
 export const connectedPeers = writable(0)
+export const progressText = writable("initializing...")
+export const progressState = writable(0)
+
 
 
 
