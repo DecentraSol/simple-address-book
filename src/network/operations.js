@@ -80,7 +80,23 @@ export const sendAddress = async (identity,scannedAddress) => {
 
 function updateAddressBook(messageObj) {
     const contactData = JSON.parse(messageObj.toJSON().data);
-    _myAddressBook.push({ firstName: contactData.firstName, lastName: contactData.lastName });
+    _myAddressBook.push({
+        firstName: contactData.firstName,
+        middleName: contactData.middleName,
+        lastName: contactData.lastName,
+        organization: contactData.organization,
+        workPhone: contactData.workPhone,
+        birthday: contactData.birthday,
+        title: contactData.title,
+        url: contactData.url,
+        note: contactData.note,
+        street: contactData.street,
+        city: contactData.city,
+        stateProvince: contactData.stateProvince,
+        postalCode: contactData.postalCode,
+        countryRegion: contactData.countryRegion,
+        own: false
+    });
     myAddressBook.set(_myAddressBook);
 }
 

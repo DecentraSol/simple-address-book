@@ -25,7 +25,6 @@ Browser A)
 Result: Address of Bob should be added automatically on Alice address book
 
 ## Todo
-- fix adding full address attributes (vcard standard? which standard?)
 - add confirm modal when requesting address from Bob - add checkout "send my own address"
 - add confirm notification on Bob when send-address request arrives - optionally add Address of "Alice"
 - add confirm notification on Alice when deliver-address message arrives to add address
@@ -44,3 +43,5 @@ Result: Address of Bob should be added automatically on Alice address book
 - https://docs.waku.org/guides/js-waku/light-send-receive/
 - https://github.com/waku-org/js-waku
 
+## Done
+- 30.12.2023 fix adding full address attributes
