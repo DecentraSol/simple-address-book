@@ -33,7 +33,20 @@ export async function startNetwork() {
 
     progressText.set("waku started - waiting for remote peers")
     progressState.set(3)
-    await waitForRemotePeer(_wakuNode, [Protocols.LightPush]);
+    // await waitForRemotePeer(_wakuNode, [Protocols.LightPush]);
+    await waitForRemotePeer(_wakuNode, [Protocols.Store]);
+
+    // Create the callback function
+//     const callback = (wakuMessage) => {
+//         // Render the message/payload in your application
+//         console.log(wakuMessage);
+//     };
+//
+// // Query the Store peer
+//     await node.store.queryWithOrderedCallback(
+//         [decoder],
+//         callback,
+//     );
 
     progressText.set("waku peers connected - opening connections ...")
     progressState.set(4)
@@ -63,9 +76,7 @@ async function handleMessage (wakuMessage) {
                 result = await confirm({data:messageObj})
                 if(result){
                     const contact =  _myAddressBook.find((entry) => entry.owner === _identity) //TODO check if requester (Alice) was sending her own data
-
                     sendMyAddress(messageObj.sender,contact);
-
                     if(_subscriberList.indexOf(messageObj.sender)===-1)
                         _subscriberList.push(messageObj.sender)
                     console.log("_subscriberList",_subscriberList)
